@@ -1,37 +1,10 @@
 import React from 'react';
-
-const footers = [
-	{
-		title: 'Company',
-		description: ['Team', 'History', 'Contact us', 'Locations'],
-	},
-	{
-		title: 'Features',
-		description: [
-			'Cool stuff',
-			'Random feature',
-			'Team feature',
-			'Developer stuff',
-			'Another one',
-		],
-	},
-	{
-		title: 'Resources',
-		description: [
-			'Resource',
-			'Resource name',
-			'Another resource',
-			'Final resource',
-		],
-	},
-	{
-		title: 'Legal',
-		description: ['Privacy policy', 'Terms of use'],
-	},
-];
+import "./Footer.css";
 
 export default function Footer() {
   return (
-	<div>Footer</div>
+	<footer>
+          <p>&copy; 2022 CarGrab.com</p>
+	</footer>
   )
 }

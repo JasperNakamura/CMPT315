@@ -53,7 +53,7 @@ const HomeAppBar = () => {
   return (
     <ThemeProvider theme={theme}>
         <AppBar position="static">
-            <Container maxWidth="xl">
+            <Container maxWidth="xxxl">
                 <Toolbar disableGutters>
                     <CarRentalIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 , color: 'white'}} />
                     <Typography
