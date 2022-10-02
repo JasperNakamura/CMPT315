@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Student
+from .models import *
 
-class StudentSerializer(serializers.ModelSerializer):
+class CarSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Student
-        fields = ('id', 'name', 'email')
+        model = Car
+        fields = ('CarID', 'Manufacturer', 'Model', 'FuelType', 'Colour', 'LicencePlate', 'Status', 'Mileage', 'Branch', 'Type')

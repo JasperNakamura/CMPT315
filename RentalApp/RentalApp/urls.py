@@ -19,7 +19,7 @@ from rest_framework import routers
 from api import views
 
 router = routers.DefaultRouter()
-router.register(r'students', views.StudentView, 'Student')
+router.register(r'cars', views.CarView, 'Car')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

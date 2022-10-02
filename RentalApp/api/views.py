@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from rest_framework import generics, viewsets
-from .serializers import StudentSerializer
-from .models import Student
+from .serializers import *
+from .models import *
 
 # Create your views here.
 
-class StudentView(viewsets.ModelViewSet):
-    serializer_class = StudentSerializer
-    queryset = Student.objects.all()
+class CarView(viewsets.ModelViewSet):
+    serializer_class = CarSerializer
+    queryset = Car.objects.all()
