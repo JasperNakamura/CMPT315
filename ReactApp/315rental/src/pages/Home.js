@@ -29,8 +29,8 @@ const theme = createTheme({
 const Home = () => {
   return (
     <div>
+      <Header/>
       <body> 
-        <Header/>
         <div class="jumbotron-image">
           <div class="jumbotron-card">
             <div class="pickup-search">
@@ -58,8 +58,8 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <Footer/>
       </body>
+      <Footer/>
     </div>
   );
 };
