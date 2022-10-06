@@ -1,0 +1,10 @@
+[
+{
+    "model": "api.student",
+    "pk": 1,
+    "fields": {
+        "name": "brendan",
+        "email": "test@test.ca"
+    }
+}
+]
