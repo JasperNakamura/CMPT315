@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import CarRentalIcon from '@mui/icons-material/CarRental';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
+import Link from '@mui/material/Link';
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -28,7 +29,7 @@ const theme = createTheme({
 })
 
 /*MUI AppBar modified tempalte*/
-const pages = ['Reservations', 'Deals', 'Locations', 'Cars'];
+const pages = ['Cars', 'Reservations', 'Deals', 'Locations'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const HomeAppBar = () => {
@@ -115,7 +116,8 @@ const HomeAppBar = () => {
                         <Button
                             key={page}
                             onClick={handleCloseNavMenu}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
+                            sx={{ my: 2, color: 'white', display: 'block', textDecoration: 'none'}}
+                            href={`/${page}`}
                         >
                             {page}
                         </Button>
