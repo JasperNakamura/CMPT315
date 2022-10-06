@@ -6,3 +6,9 @@ temp/
 
 ## ignore virtual environment
 RentalVenv/
+
+ReactApp/node_modules
+ReactApp/315rental/node_modules
+node_modules
+
+RentalApp/api/__pycache__
