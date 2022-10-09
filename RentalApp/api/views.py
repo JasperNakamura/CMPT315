@@ -8,3 +8,13 @@ from .models import *
 class CarView(viewsets.ModelViewSet):
     serializer_class = CarSerializer
     queryset = Car.objects.all()
+
+
+class CarTypeView(viewsets.ModelViewSet):
+    serializer_class = CarTypeSerializer
+    queryset = CarType.objects.all()
+
+class BranchView(viewsets.ModelViewSet):
+    serializer_class = BranchSerializer
+    queryset = Branch.objects.all()
+   

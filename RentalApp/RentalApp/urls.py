@@ -20,6 +20,8 @@ from api import views
 
 router = routers.DefaultRouter()
 router.register(r'cars', views.CarView, 'Car')
+router.register(r'carTypes', views.CarTypeView, 'CarType')
+router.register(r'branches', views.BranchView, 'Branch')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

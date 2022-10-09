@@ -1,6 +1,8 @@
+from email.policy import default
 from pyexpat import model
 from unittest.util import _MAX_LENGTH
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -17,7 +19,15 @@ class Car(models.Model):
     Type = models.ForeignKey('CarType', on_delete=models.CASCADE)
 
 class CarType(models.Model):
-    pass
+    TypeID = models.AutoField(primary_key=True)
+    Description = models.CharField(max_length=100)
+    DailyCost = models.FloatField()
+    WeeklyCost = models.FloatField()
+    MonthlyCost = models.FloatField()
+    LateFee = models.FloatField()
+    DiffBranchFee = models.FloatField()
 
 class Branch(models.Model):
-    pass
+    BranchID = models.AutoField(primary_key=True)
+    PhoneNum = PhoneNumberField(region="CA")
+
