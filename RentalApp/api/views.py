@@ -16,4 +16,15 @@ class CarTypeView(viewsets.ModelViewSet):
 class BranchView(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
     queryset = Branch.objects.all()
-   
+
+class EmployeeView(viewsets.ModelViewSet):
+    serializer_class = EmployeeSerializer
+    queryset = Employee.objects.all()
+
+class CustomerView(viewsets.ModelViewSet):
+    serializer_class = CustomerSerializer
+    queryset = Customer.objects.all()
+
+class RentalView(viewsets.ModelViewSet):
+    serializer_class = RentalSerializer
+    queryset = Rental.objects.all()

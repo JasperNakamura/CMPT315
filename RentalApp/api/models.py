@@ -52,7 +52,7 @@ class Employee(models.Model):
     PostalCode = models.CharField(max_length=6)
     StreetNumber = models.PositiveSmallIntegerField()
     StreetName = models.CharField(max_length=15)
-    UnitNumber = models.PositiveSmallIntegerField(blank=True)
+    UnitNumber = models.PositiveSmallIntegerField(blank=True, null = True)
     WorksAt = models.ForeignKey('Branch', on_delete=models.CASCADE)
 
 class Customer(models.Model):
@@ -69,13 +69,13 @@ class Customer(models.Model):
     PostalCode = models.CharField(max_length=6)
     StreetNumber = models.PositiveSmallIntegerField()
     StreetName = models.CharField(max_length=15)
-    UnitNumber = models.PositiveSmallIntegerField(blank=True)
+    UnitNumber = models.PositiveSmallIntegerField(blank=True, null = True)
 
 class Rental(models.Model):
     RentalID = models.AutoField(primary_key=True)
     DateFrom = models.DateField()
     DateTo = models.DateField()
-    DateReturned = models.DateField()
+    DateReturned = models.DateField(blank = True, null = True)
     TotalCost = models.FloatField()
     LicensePlate = models.CharField(max_length=8)
     GoldMember = models.BooleanField()
