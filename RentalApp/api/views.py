@@ -9,7 +9,6 @@ class CarView(viewsets.ModelViewSet):
     serializer_class = CarSerializer
     queryset = Car.objects.all()
 
-
 class CarTypeView(viewsets.ModelViewSet):
     serializer_class = CarTypeSerializer
     queryset = CarType.objects.all()
