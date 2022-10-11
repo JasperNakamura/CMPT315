@@ -6,6 +6,7 @@ temp/
 
 ## ignore virtual environment
 RentalVenv/
+CMPT315-Car-Rental-Project/
 
 ReactApp/node_modules
 ReactApp/315rental/node_modules
