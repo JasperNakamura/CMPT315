@@ -1,15 +1,38 @@
+.structure {
+    display: grid;
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Ubuntu', sans-serif;
+    color: white; 
+    grid-template-columns: 1.5em 1fr 1.5em;
+    grid-template-areas:
+      "header header header header"
+      "main main main main"
+      "footer footer footer footer"
+  }
+
+header { grid-column: header / header; } 
+.main-content { grid-area: main; }
+footer { grid-area: footer; }
+
+header {
+    margin-top: 0;
+}
+
 body {
     margin: 0;
     padding: 0;
     height: 100%;
+    max-width: 100%;
 }
 
 footer {
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
     height: 60px;
     text-align: center;
+    padding-top: .2em;
 }
 
 div.jumbotron-image {
@@ -18,12 +41,7 @@ div.jumbotron-image {
     background-size: cover;
     padding: 10px;
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    max-width: 100vw;
-    width: 100vw;
+    max-width: 100%;
 }
 
 .jumbotron-card {  
@@ -39,11 +57,16 @@ div.jumbotron-image {
     gap: 10px 10px;
     grid-auto-flow: row;
     grid-template-areas:
+      "jumbo-title . . . "
       "pickup-search pickup-search dropoff-search dropoff-search"
       "pickup-date dropoff-date pickup-time dropoff-time"
       "search-button search-button search-button search-button";
   }
-  
+
+h2 {
+    color: black;
+}
+
 .pickup-search { grid-area: pickup-search; }
 
 .dropoff-search { grid-area: dropoff-search; }
@@ -62,4 +85,9 @@ div.jumbotron-image {
     align-content: center; 
     text-align: center;
     color: white;
+}
+
+.simple-container {
+    padding-left: 10%;
+    padding-right: 10%;
 }
