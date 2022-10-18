@@ -44,7 +44,7 @@ const Home = () => {
 
   const renderCard = (card, index) => {
       return (
-        <Card sx={{ width: 200, height: 200, margin: '10px'}} key={index}>
+        <Card sx={{ margin: '10px'}} key={index}>
           <CardActionArea component={RouterLink} to="/cars">
             <CardContent>
               <Typography align="center" variant="h5" component="div">
@@ -65,59 +65,69 @@ const Home = () => {
   }
   return (
     <div>
-      
-      <div class="structure"> 
-        <header><Header/></header>
-        <div class="main-content">
-          <div class="jumbotron-image">
-            <div class="jumbotron-card">
-              <h2 id="jumbo-title">Search Car</h2>
-              <div class="pickup-search">
-                <PickupSearch/>
-              </div>
-              <div class="dropoff-search">
-                <DropoffSearch/>
-              </div>
-              <div class="pickup-date">
-                <DatePickup/>
-              </div>
-              <div class="dropoff-date">
-                <DateDropoff/>
-              </div>
-              <div class="pickup-time">
-                <TimePickup/>
-              </div>
-              <div class="dropoff-time">
-                <TimeDropoff/>
-              </div>
-              <div class="search-button">
-                <ThemeProvider theme={theme}>
-                <Button variant="contained">Search</Button>
-                </ThemeProvider>
-              </div>
-            </div>
-          </div>
+      {/*Header section from component*/}
+      <header><Header/></header>
 
-          {/*Popular Car Type Carousel*/}
-          <div class="simple-container">
-            <h2>Popular Car Types</h2>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                bgcolor: 'background.paper',
-                borderRadius: 1,
-              }}
-            >
-              {cardInfo.map(renderCard)}
-            </Box>
+      {/*Container-fluid, container and row are standard convention for website layouts*/}
+      <div class="container-fluid" id="hero">
+        <div class="container">
+          <div class="jumbotron-card">
+            <h2 id="jumbo-title">Search Car</h2>
+            <div class="pickup-search">
+              <PickupSearch/>
+            </div>
+            <div class="dropoff-search">
+              <DropoffSearch/>
+            </div>
+            <div class="pickup-date">
+              <DatePickup/>
+            </div>
+            <div class="dropoff-date">
+              <DateDropoff/>
+            </div>
+            <div class="pickup-time">
+              <TimePickup/>
+            </div>
+            <div class="dropoff-time">
+              <TimeDropoff/>
+            </div>
+            <div class="search-button">
+              <ThemeProvider theme={theme}>
+              <Button variant="contained">Search</Button>
+              </ThemeProvider>
+            </div>
           </div>
         </div>
       </div>
+
+      {/*Popular Car Type Carousel*/}
+      <div class="container-fluid">
+        <div class="container">
+          <h2>Popular Car Types</h2>
+          <Box
+            sx={{
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(6, 1fr)',
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+            }}
+          >
+            {cardInfo.map(renderCard)}
+          </Box>
+          </div>
+        </div>
+      
+      {/*Footer Section*/}
       <footer><Footer/></footer>
     </div>
   );
 };
 
 export default Home;
+
+/*
+      <div class="container-fluid">
+        <div class="container">
+
+        </div>
+      </div>*/
