@@ -2,6 +2,7 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/system/Box';
+import SearchIcon from '@mui/icons-material/Search';
 
 /*
 PURPOSE: Search field for finding pickup locations
@@ -54,7 +55,7 @@ export default function PickupSearch() {
         <Box sx={{border: '1px solid gray', borderRadius: 1}}>
              <Search>
                 <SearchIconWrapper>
-                    <LocationOnIcon />
+                    <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
                     placeholder="Pickup Location"
