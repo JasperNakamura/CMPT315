@@ -28,15 +28,6 @@ ul {
 	list-style-type: none;
 }
 
-footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-    text-align: center;
-    padding-top: .2em;
-}
-
 /* layout styling */
 .container {
 	width: 1170px;
@@ -45,22 +36,26 @@ footer {
 
 .container-fluid {
 	width: 100%;
-	height: 70px;
+	height: 100%;
 }
 
 .right-align {
 	float: right;
 }
 
-
 /*Hero section*/
 #hero {
     background-image: url("../../components/img/jumbotron1.jpg");
 	background-size: cover;
-    padding-top: 5px;
-    height: 40vh;
-    margin-bottom: 5vh;
+    height: 60vh;
+    display: grid;
+    place-items: center;
+    align-items: center;
+    overflow: hidden;
+    margin-top: auto;
+    margin-bottom: auto;
 }
+
 
 /*Car search card*/
 .jumbotron-card {  
@@ -83,6 +78,10 @@ footer {
 
 h2 {
     color: black;
+}
+
+#carousel {
+    margin-bottom: 5vh;
 }
 
 .pickup-search { grid-area: pickup-search; }

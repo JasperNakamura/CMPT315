@@ -42,11 +42,11 @@ export default function CarFilter() {
 
     return (
         <List
-            sx={{ width: '100%', maxWidth: 270, bgcolor: '#EDA7AE' }}
+            sx={{ width: '100%', maxWidth: 270, bgcolor: '#fff' }}
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-                <ListSubheader sx={{ border: '1px solid black', bgcolor: '#EDA7AE' }} component="div" id="nested-list-subheader">
+                <ListSubheader sx={{ border: '1px solid black', bgcolor: '#fff' }} component="div" id="nested-list-subheader">
                     <h2 sx={{ color: 'black' }}><b>Filter</b></h2>
                 </ListSubheader>
             }
@@ -57,7 +57,7 @@ export default function CarFilter() {
                 {carModelState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={carModelState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF' }} >
+                <List component="div" disablePadding sx={{ bgcolor: '#fff' }} >
                 {models.map(model => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -74,7 +74,7 @@ export default function CarFilter() {
                 {ManufracturerState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={ManufracturerState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' } }>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' } }>
                     {manufacturers.map(maker => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -91,7 +91,7 @@ export default function CarFilter() {
                 {colorState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={colorState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' }}>
                 {colors.map(color => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -108,7 +108,7 @@ export default function CarFilter() {
                 {colorState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={transmissionState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' }}>
                 {transmissionsTyp.map(transmission => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -125,7 +125,7 @@ export default function CarFilter() {
                 {fuelState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={fuelState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' }}>
                 {fuelType.map(fuel => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -142,7 +142,7 @@ export default function CarFilter() {
                 {driveState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={driveState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' }}>
                 {driveType.map(drive => {
                         return(
                             <ListItemButton sx={{ pl: 4 }}>
@@ -159,7 +159,7 @@ export default function CarFilter() {
                 {reviewState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={reviewState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff' }}>
                     <ListItemButton sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <GradeIcon style={{ color: '#f4af03' }}></GradeIcon>
