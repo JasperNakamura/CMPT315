@@ -14,3 +14,4 @@ node_modules
 RentalApp/api/__pycache__
 RentalApp/RentalApp/__pycache__
 RentalApp/api/migrations/__pycache__
+RentalApp/RentalPage
