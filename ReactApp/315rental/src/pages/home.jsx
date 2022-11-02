@@ -66,7 +66,7 @@ const Home = () => {
   return (
     <div>
       {/*Header section from component*/}
-      <header><Header/></header>
+      <Header/>
 
       {/*Container-fluid, container and row are standard convention for website layouts*/}
       <div className="container-fluid" id="hero">
@@ -110,15 +110,14 @@ const Home = () => {
               gridTemplateColumns: 'repeat(6, 1fr)',
               bgcolor: 'background.paper',
               borderRadius: 1,
-            }}
-          >
+            }}>
             {cardInfo.map(renderCard)}
           </Box>
-          </div>
         </div>
+      </div>
       
       {/*Footer Section*/}
-      <footer><Footer/></footer>
+      <Footer/>
     </div>
   );
 };
