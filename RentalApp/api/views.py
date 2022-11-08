@@ -23,22 +23,52 @@ class CarView(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     filterset_class = AvailableCarFilterSet
 
+class CarTypeFilter(filters.FilterSet):
+    class Meta:
+        model = CarType
+        fields = ('TypeID', 'Description', 'DailyCost', 'WeeklyCost', 'MonthlyCost', 'LateFee', 'DiffBranchFee')
+
 class CarTypeView(viewsets.ModelViewSet):
     serializer_class = CarTypeSerializer
     queryset = CarType.objects.all()
+    filterset_class = CarTypeFilter
+
+class BranchFilter(filters.FilterSet):
+    class Meta:
+        model = Branch
+        fields = ('BranchID', 'PhoneNum', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber')
 
 class BranchView(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
     queryset = Branch.objects.all()
+    filterset_class = BranchFilter
+
+class EmployeeFilter(filters.FilterSet):
+    class Meta:
+        model = Employee
+        fields = ('ID', 'FirstName', 'LastName', 'Email', 'PhoneNum', 'Password', 'Salary', 'Rank', 'DOB', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber', 'WorksAt')
 
 class EmployeeView(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
+    filterset_class = EmployeeFilter
+
+class CustomerInfoFilter(filters.FilterSet):
+    class Meta:
+        model = Customer
+        fields = ('ID', 'FirstName', 'LastName', 'DriversLicense', 'Email', 'PhoneNum', 'DOB', 'GoldMember', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber')
 
 class CustomerView(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
+    filterset_class = CustomerInfoFilter
+
+class RentalsFilter(filters.FilterSet):
+    class Meta:
+        model = Rental
+        fields = ('RentalID', 'DateFrom', 'DateTo', 'DateReturned', 'TotalCost', 'LicensePlate', 'GoldMember', 'Customer', 'Employee', 'BranchFrom', 'BranchTo', 'Car', 'CarType')
 
 class RentalView(viewsets.ModelViewSet):
     serializer_class = RentalSerializer
     queryset = Rental.objects.all()
+    filterset_class = RentalsFilter
