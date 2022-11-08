@@ -57,11 +57,11 @@ export default function CarFilter() {
 
     return (
         <List
-            sx={{ width: '100%', maxWidth: 270, bgcolor: '#EDA7AE' }}
+            sx={{ width: '100%', maxWidth: 270, bgcolor: '#fff' }}
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
-                <ListSubheader sx={{ border: '1px solid black', bgcolor: '#EDA7AE' }} component="div" id="nested-list-subheader">
+                <ListSubheader sx={{ border: '1px solid black', bgcolor: '#fff' }} component="div" id="nested-list-subheader">
                     <h2 sx={{ color: 'black' }}><b>Filter</b></h2>
                 </ListSubheader>
             }
@@ -72,7 +72,7 @@ export default function CarFilter() {
                 {carModelState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={carModelState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 250, overflow: 'auto'  }}>{
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 250, overflow: 'auto'  }}>{
                     models.map((model, index) => {
                         return(
                         <FormGroup>
@@ -92,7 +92,7 @@ export default function CarFilter() {
                 {ManufracturerState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={ManufracturerState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 250, overflow: 'auto' } }>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 250, overflow: 'auto' } }>
                 {manufacturers.map((manufacturer, index) => {
                         return(
                             <ListItemButton sx={{ pl: 4 }} value={manufacturer} key={index}  onClick={() => toggleCheckboxValue(manufacturers,index, isManufacturerChecked, setIsManufacturerChecked)} >
@@ -109,8 +109,9 @@ export default function CarFilter() {
                 {colorState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={colorState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 250, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 250, overflow: 'auto' }}>
                 {colors.map((color, index) => {
+
                         return(
                             <ListItemButton sx={{ pl: 4 }} value={color} key={index}  onClick={() => toggleCheckboxValue(colors,index, isColorChecked,setIsColorChecked)} >
                             <Checkbox  key={index} checked={isColorChecked[index]} onClick={() => toggleCheckboxValue(colors, index, isColorChecked, setIsColorChecked)}/>
@@ -125,7 +126,7 @@ export default function CarFilter() {
                 {colorState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={transmissionState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 250, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 250, overflow: 'auto' }}>
                 {transmissionsType.map((transmission, index) => {
                         return(
                             <ListItemButton sx={{ pl: 4 }} value={transmission} key={index}  onClick={() => toggleCheckboxValue(transmissionsType,index, isTransmissionTypeChecked, setIsTransmissionTypeChecked)} >
@@ -142,7 +143,7 @@ export default function CarFilter() {
                 {fuelState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={fuelState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 250, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 250, overflow: 'auto' }}>
                 {fuelType.map((fuel, index) => {
                         return(
                             <ListItemButton sx={{ pl: 4 }} value={fuel} key={index}  onClick={() => toggleCheckboxValue(fuelType,index, isFuelTypeChecked, setIsFuelTypeChecked)} >
@@ -159,7 +160,7 @@ export default function CarFilter() {
                 {driveState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={driveState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF', maxHeight: 500, overflow: 'auto' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff', maxHeight: 500, overflow: 'auto' }}>
                 {driveType.map((drive, index) => {
                         return(
                             <ListItemButton sx={{ pl: 4 }} value={drive} key={index}  onClick={() => toggleCheckboxValue(driveType,index, isDriveTypeChecked,setIsDriveTypeChecked)} >
@@ -176,7 +177,7 @@ export default function CarFilter() {
                 {reviewState ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={reviewState} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ bgcolor: '#FBDCDF' }}>
+                <List component="div" disablePadding sx={{ bgcolor: '#fff' }}>
                     <ListItemButton sx={{ pl: 4 }}>
                         <ListItemIcon>
                             <GradeIcon style={{ color: '#f4af03' }}></GradeIcon>
