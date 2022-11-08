@@ -18,6 +18,10 @@ class AvailableCarFilterSet(filters.FilterSet):
             return queryset.filter(~Q(CarID__in=Rental.objects.values_list('Car', flat=True).filter(Q(Q(DateFrom__lte=dFrom) & Q(DateTo__gte=dFrom)) | Q(Q(DateFrom__lte=dTo) & Q(DateTo__gte=dTo)) | Q(Q(DateFrom__gte=dFrom) & Q(DateTo__lte=dTo)))))
         return queryset
     
+    class Meta:
+        model = Car
+        fields = ('CarID', 'Manufacturer', 'Model', 'FuelType', 'Colour', 'LicencePlate', 'Status', 'Mileage', 'Branch', 'Type')
+
 class CarView(viewsets.ModelViewSet):
     serializer_class = CarSerializer
     queryset = Car.objects.all()
