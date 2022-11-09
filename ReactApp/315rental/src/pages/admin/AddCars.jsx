@@ -35,8 +35,12 @@ export default function AddCars () {
         if(event.target.id === "available_input_id"){
             setAvailable(!event.target.checked);
         }
-        setBranch(event.target.value);
-        setCartype(event.target.value);
+        if(event.target.id === "branch_input_id"){
+            setBranch(event.target.value);
+        }
+        if(event.target.id === "cartype_input_id"){
+            setCartype(event.target.value);
+        }
     };
 
     const handleSubmit = (event) =>{
@@ -110,7 +114,7 @@ export default function AddCars () {
                         <InputLabel id="branch-simple-select-label">Branch</InputLabel>
                         <Select
                         labelId="branch-simple-select-label"
-                        id="branch-simple-select"
+                        id="branch_input_id"
                         value={branch}
                         label="Branch"
                         onChange={handleChange}
@@ -120,7 +124,7 @@ export default function AddCars () {
                         <InputLabel id="branch-simple-select-label">Car Type</InputLabel>
                         <Select
                         labelId="cartype-simple-select-label"
-                        id="cartype-simple-select"
+                        id="cartype_input_id"
                         value={cartype}
                         label="Car Type"
                         onChange={handleChange}
