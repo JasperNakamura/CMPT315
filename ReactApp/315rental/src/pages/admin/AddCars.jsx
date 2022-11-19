@@ -1,22 +1,75 @@
 import * as React from 'react';
-import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
+import { useEffect, useState } from "react";
+import axios from 'axios';
 
-
+const url = 'localhost:8000/api/cars';
 
 export default function AddCars () {
-    const [branch, setBranch] = React.useState('');
-    const [cartype, setCartype] = React.useState('');
+    
+    const [branch, setBranch] = React.useState([]);
+    const [carType, setCarType] = React.useState([]);
+
+    /* Branch API */
+    const getBranch = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/branches/?format=json`)
+        if (response.length > 0 || response.data !== undefined) {
+          setBranch(response.data);
+        }
+      } catch (error) {
+          console.log(error);
+      }  
+    }
+
+    /* CarType API */
+    const getCarType = async () => {
+        try {
+          const response = await axios.get(`http://127.0.0.1:8000/api/carTypes/?format=json`)
+          if (response.length > 0 || response.data !== undefined) {
+            setCarType(response.data);
+          }
+        } catch (error) {
+            console.log(error);
+        }  
+    }
+  
+    useEffect(() => {
+        getBranch();
+        getCarType();
+    }, []);
+
+    /* Input field values */
     const [manufacturer, setMenufacturer] = React.useState("");
     const [model, setModel] = React.useState("");
     const [fuelType, setFuelType] = React.useState("");
     const [colour, setColour] = React.useState("");
-    const [licencePlate, setLicencePlate] = React.useState("");
+    const [licensePlate, setLicensePlate] = React.useState("");
     const [available, setAvailable] = React.useState(true);
+    const [mileage, setMileage] = React.useState("");
+
+    /* Axios post location */
+    const handleSubmit = async (event) =>{
+        event.preventDefault();
+        await axios.post('http://localhost:8000/api/cars/', {
+            Manufacturer: manufacturer, 
+            Model: model,
+            FuelType: fuelType,
+            Colour: colour,
+            LicencePlate: licensePlate,
+            Status: available,
+            Mileage: mileage,
+            Branch: branch,
+            Type: carType,
+        })
+        .then(res => console.log(res)) 
+        .catch(err => console.log(err))
+    }
 
     const handleChange = (event) => {
-        console.log(event.target.id);
+        console.log('event', event.target);
         if(event.target.id === "manufacturer_input_id"){
             setMenufacturer(event.target.value);
         }
@@ -29,32 +82,22 @@ export default function AddCars () {
         if(event.target.id === "colour_input_id"){
             setColour(event.target.value);
         }
-        if(event.target.id === "licenceplate_input_id"){
-            setLicencePlate(event.target.value);
+        if(event.target.id === "licenseplate_input_id"){
+            setLicensePlate(event.target.value);
         }
         if(event.target.id === "available_input_id"){
             setAvailable(!event.target.checked);
         }
-        if(event.target.id === "branch_input_id"){
+        if(event.target.id === "mileage_input_id") {
+            setMileage(event.target.value);
+        }
+        if(event.target.name === "branch_input_id"){
             setBranch(event.target.value);
         }
-        if(event.target.id === "cartype_input_id"){
-            setCartype(event.target.value);
+        if(event.target.name === "cartype_input_id"){
+            setCarType(event.target.value);
         }
     };
-
-    const handleSubmit = (event) =>{
-        event.preventDefault();
-        const manufacturerValue = manufacturer;
-        const modelValue = model;
-        const fuelTypeValue = fuelType;
-        const colourValue = colour;
-        const availableValue = available;
-
-        console.log("Submit: ", manufacturerValue, modelValue, fuelTypeValue, colourValue, availableValue);
-    }
-
-    
 
     return (
         <div>
@@ -62,76 +105,100 @@ export default function AddCars () {
 
             <Container>
                 <h1>Add Cars to Database</h1>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
                     <div>
                         <TextField                          
+                            sx={{m: 2}}
                             required
                             id="manufacturer_input_id"
                             label="Manufacturer"                  
                             value={manufacturer}
                             onChange={handleChange}
-                            /* inputRef={} */
                         />
 
                         <TextField
+                            sx={{m: 2}}
                             required
                             id="model_input_id"
                             label="Model"
                             value={model}
                             onChange={handleChange}
-                            /* inputRef={} */
                         />
 
                         <TextField
+                            sx={{m: 2}}
                             required
                             id="fueltype_input_id"
                             label="FuelType"
                             value={fuelType}
                             onChange={handleChange}
-                            /* inputRef={} */
                         />
 
                         <TextField
+                            sx={{m: 2}}
                             required
                             id="colour_input_id"
                             label="Colour"
                             value={colour}
                             onChange={handleChange}
-                            /* inputRef={} */
                         />
 
                         <TextField
+                            sx={{m: 2}}
                             required
-                            id="licenceplate_input_id"
-                            label="LicencePlate"
-                            value={licencePlate}
+                            id="licenseplate_input_id"
+                            label="LicensePlate"
+                            value={licensePlate}
                             onChange={handleChange}
-                            /* inputRef={} */
                         />
 
-                        <FormControlLabel control={<Switch id="available_input_id"/>} label="Available" labelPlacement='start' onChange={handleChange} defaultChecked={false} value={available} />
+                        <div>
+                            <FormControlLabel control={<Switch id="available_input_id"/>} label="Available" labelPlacement='start' onChange={handleChange} defaultChecked={false} value={available} />
+                        </div>
 
-                        <InputLabel id="branch-simple-select-label">Branch</InputLabel>
-                        <Select
-                        labelId="branch-simple-select-label"
-                        id="branch_input_id"
-                        value={branch}
-                        label="Branch"
-                        onChange={handleChange}
-                        >
-                        </Select>
+                        <TextField
+                            sx={{m: 2}}
+                            required
+                            id="mileage_input_id"
+                            label="Mileage"
+                            value={mileage}
+                            onChange={handleChange}
+                        />
 
-                        <InputLabel id="branch-simple-select-label">Car Type</InputLabel>
-                        <Select
-                        labelId="cartype-simple-select-label"
-                        id="cartype_input_id"
-                        value={cartype}
-                        label="Car Type"
-                        onChange={handleChange}
+                        <br/>
+
+                        <h2>Branch Location</h2>
+                        <select
+                            required
+                            name="branch"
+                            id="branch-simple-select"
+                            onChange={handleChange}
                         >
-                        </Select>
+                            <option disabled selected value> ー Select Branch Location* ー </option>
+                            {branch.map((location, index) => {
+                                console.log(location.City);
+                                return <option key={index} value={location.BranchID}>{location.City}</option>
+                            })}
+                        </select>
+
+                        <select
+                            required
+                            name="clients"
+                            id="client-simple-select"
+                            onChange={handleChange}
+                        >
+                            <option disabled selected value> ー Select Car Type* ー </option>
+                            {carType.map((description, index) => {
+                                return <option key={index} value={description.TypeID}>{description.Description}</option>
+                            })}
+                        </select>
                     </div>
-                    <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+
+                    <Grid container spacing={0} justifyContent="center">
+                        <Grid item xs={3}>
+                            <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
+                        </Grid>   
+                    </Grid> 
                 </Box>
             </Container>
 
