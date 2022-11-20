@@ -1,0 +1,24 @@
+CarID,Manufacturer,Model,FuelType,Colour,LicencePlate,Status,Mileage,Branch,Type
+4,Toyota,Rav-4,Gas,Silver,RWC-7494,False,40000,1,3
+5,Pontiac,G5,Gas,Red,QLV-5772,False,180000,1,2
+6,Toyota,Solara,Gas,Blue,LOF-9205,False,100000,4,2
+7,Ford,Ranger,Gas,Red,KUX-1137,False,10000,4,3
+8,Volkswagen,Beetle,Gas,Yellow,JTQ-2754,False,50000,1,2
+9,Mazda ,B4000,Gas,Blue,PCL-4230,False,102338,1,2
+10,Pontiac ,G8,Gas,Silver,KZN-8398,False,109576,4,2
+11,Mercedes Benz,G Wagon,Gas,Black,HSG-8410,False,98758,1,3
+12,Kia,Forte,Gas,Silver,8GA-G338,False,232445,1,2
+13,Subaru,Impreza,Gas,Blue,KJP-1087,False,261119,4,2
+14,BMW,7 Series,Gas,Cream,SC4-1147,False,247463,1,2
+15,Volkswagen,Cabriolet,Gas,Cream,BHB-5397,False,159821,1,2
+16,Mazda,RX7,Gas,Red,DXZ-2135,False,119567,1,2
+17,Mazda ,RX8,Gas,Blue,SC4-2994,False,228915,4,2
+18,Mazda,Speed 5,Gas,Black,YZA-0325,False,134015,4,2
+19,Nissan,Skyline,Gas,White,KSX-6353,False,254347,4,2
+20,Cadillac,XTS,Gas,Cream,BZC-0823,False,285328,1,2
+21,Honda,Prelude,Gas,Silver,EPZ-7724,False,81426,1,2
+22,Honda,Type R,Gas,Blue,DYZ-3828,False,148751,4,2
+23,Volkswagen ,Touareg,Gas,Red,CV6-L141,False,184797,4,2
+24,Volkswagen,Golf,Gas,Yellow,KRM-8201,False,138047,4,2
+25,Hyundai,Snata,Gas,Dark Blue,GWZ-8144,False,278557,4,2
+26,Chrysler ,300,Gas,Black,GSE-1548,False,118835,4,2
