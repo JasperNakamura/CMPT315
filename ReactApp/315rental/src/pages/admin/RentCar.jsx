@@ -14,7 +14,7 @@ export default function RentCar () {
     const [returned, setReturned] = React.useState(moment('2014-08-18T21:11:54'));
 
     const [totalCost, setTotalCost] = React.useState(0.0);
-    const [licencePlate, setLicencePlate] = React.useState('');
+    const [licensePlate, setLicensePlate] = React.useState('');
     const [goldMember, setGoldMember] = React.useState(false);
     const [customer, setCustomer] = React.useState(0);
     const [employee, setEmployee] = React.useState(0);
@@ -98,12 +98,6 @@ export default function RentCar () {
         if(event.target.id === "totalCost_id"){
             setTotalCost(parseFloat(event.target.value));
         }
-        // if(event.target.id === "licencePlate_id"){
-        //     setLicencePlate(event.target.value);
-        // }
-        // if(event.target.id === "goldMember_input_id"){   
-        //     setGoldMember(!event.target.checked);
-        // }
         if(event.target.id === "customer_select_id"){
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/customers/${event.target.value}/?format=json`)
@@ -133,34 +127,33 @@ export default function RentCar () {
                 console.log(vehicle);
                 setCar(parseInt(vehicle.CarID));
                 setCartype(parseInt(vehicle.Type));
-                setLicencePlate(vehicle.LicencePlate);
+                setLicensePlate(vehicle.LicencePlate);
                 }
             } catch (error) {
                 console.log(error);
             }
         }
-        // if(event.target.id === "cartype_select_id"){
-        //     setCartype(event.target.value);
-        // }
-        /*setFrom(newValue);*/
-        
     };
 
     const handleSubmit = async (event) =>{
         event.preventDefault();
         await axios.post('http://localhost:8000/api/rentals/', {
+            // temp:
             DateFrom: "2014-08-18",
             DateTo: "2014-08-18",
             DateReturned: "2014-08-18",
-            TotalCost: 420.69,
-            LicencePlate: "ABC-123",
-            GoldMember: false,
-            Customer: 2,
-            Employee: 2,
-            BranchFrom: 1,
-            BranchTo: 1,
-            Car: 2,
-            CarType: 3,
+            // DateFrom: from,
+            // DateTo: to,
+            // DateReturned: returned,
+            TotalCost: totalCost,
+            LicensePlate: licensePlate,
+            GoldMember: goldMember,
+            Customer: customer,
+            Employee: employee,
+            BranchFrom: branchfrom,
+            BranchTo: branchto,
+            Car: car,
+            CarType: cartype,
         })
         .then(res => console.log(res)) 
         .catch(err => console.log(err));
