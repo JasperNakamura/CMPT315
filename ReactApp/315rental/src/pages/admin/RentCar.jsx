@@ -13,16 +13,16 @@ export default function RentCar () {
     const [to, setTo] = React.useState(moment('2014-08-18T21:11:54'));
     const [returned, setReturned] = React.useState(moment('2014-08-18T21:11:54'));
 
-    const [totalCost, setTotalCost] = React.useState('');
-    const [licencePlate, setLicencePlate] = React.useState('');
+    const [totalCost, setTotalCost] = React.useState([]);
+    const [licencePlate, setLicencePlate] = React.useState([]);
     const [goldMember, setGoldMember] = React.useState(false);
 
-    const [customer, setCustomer] = React.useState('');
-    const [employee, setEmployee] = React.useState('');
-    const [branchfrom, setBranchfrom] = React.useState('');
-    const [branchto, setBranchto] = React.useState('');
-    const [car, setCar] = React.useState('');
-    const [cartype, setCartype] = React.useState('');
+    const [customer, setCustomer] = React.useState([]);
+    const [employee, setEmployee] = React.useState([]);
+    const [branchfrom, setBranchfrom] = React.useState([]);
+    const [branchto, setBranchto] = React.useState([]);
+    const [car, setCar] = React.useState([]);
+    const [cartype, setCartype] = React.useState([]);
 
     /* Customer API */
     const getCustomers = async () => {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import moment from 'moment';
-import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -153,117 +153,122 @@ export default function UpdateClient() {
                 <h1>Update Client Information</h1>
             </Container>
 
-            <Container>
-                <select onChange={selectedName} value={selected}>
-                    <option value="" disabled={true}>
-                        --Choose Client--
-                    </option>
-                    {
-                        allUser.map((element, index) =>
-                        <option value={index} key={element.FirstName}>{element.FirstName}</option >
-                        )
-                    }
-                </select>
-            </Container>
+            <Grid container spacing={0} justifyContent="center">
+                <Grid item xs={3}>
+                    <select onChange={selectedName} value={selected}>
+                        <option value="" disabled={true}>
+                            --Choose Client--
+                        </option>
+                        {
+                            allUser.map((element, index) =>
+                            <option value={index} key={element.FirstName}>{element.FirstName} {element.LastName}</option >
+                            )
+                        }
+                    </select>    
+                </Grid>   
+            </Grid> 
 
-            <Container>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <DesktopDatePicker
-                        label="DOB"
-                        id="DOB_id"
-                        inputFormat="MM/DD/YYYY"
-                        value={DOB}
-                        onChange={handleChange}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
-            </Container>
+            <Grid container spacing={0} justifyContent="center">
+                <Grid item xs={3}>
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <DesktopDatePicker
+                            label="DOB"
+                            id="DOB_id"
+                            inputFormat="MM/DD/YYYY"
+                            value={DOB}
+                            onChange={handleChange}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    </LocalizationProvider>                    
+                </Grid>   
+            </Grid> 
 
             <Container>
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="firstName_id"
                     label="FirstName"
                     value={firstName}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="lastName_id"
                     label="LastName"
                     value={lastName}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="license_id"
                     label="DriversLicense"
                     type="number"
                     value={diverLicense}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="email_id"
                     label="Email"
                     type="email"
                     value={email}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="phone_id"
                     label="PhoneNum"
                     type="tel"
                     value={phoneNumber}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="province_id"
                     label="Province"
                     value={province}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="city_id"
                     label="City"
                     value={city}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="postal_id"
                     label="PostalCode"
                     value={postalCode}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="streetNumber_id"
                     label="StreetNumber"
                     value={streetNumber}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="streetName_id"
                     label="StreetName"
                     value={streetName}
                     onChange={handleChange}
-                /* inputRef={} */
                 />
                 <TextField
+                    sx={{m: 2}}
                     required
                     id="unit_id"
                     label="UnitNumber"
@@ -272,11 +277,13 @@ export default function UpdateClient() {
                 />
 
 
-                <FormControlLabel control={<Switch id="goldMember_id" checked={goldMember}/>} label="GoldMember" labelPlacement='start'  onChange={handleChange} />
+                <FormControlLabel sx={{m: 2}} control={<Switch id="goldMember_id" checked={goldMember}/>} label="GoldMember" labelPlacement='start'  onChange={handleChange} />
 
-                <div >
-                    <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-                </div>
+                <Grid container spacing={0} justifyContent="center">
+                    <Grid item xs={3}>
+                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
+                    </Grid>   
+                </Grid> 
             </Container>
         </div>
     );
