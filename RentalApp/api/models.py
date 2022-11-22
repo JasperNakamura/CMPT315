@@ -12,7 +12,7 @@ class Car(models.Model):
     Model = models.CharField(max_length=50)
     FuelType = models.CharField(max_length=25)
     Colour = models.CharField(max_length=25)
-    LicencePlate = models.CharField(max_length=12)
+    LicensePlate = models.CharField(max_length=12)
     Status = models.BooleanField(default = False)
     Mileage = models.PositiveIntegerField()
     Branch = models.ForeignKey('Branch', on_delete=models.PROTECT)
