@@ -58,7 +58,7 @@ export default function AddCars () {
             Model: model,
             FuelType: fuelType,
             Colour: colour,
-            LicencePlate: licensePlate,
+            LicensePlate: licensePlate,
             Status: available,
             Mileage: mileage,
             Branch: branch,
