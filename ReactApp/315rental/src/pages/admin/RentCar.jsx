@@ -1,10 +1,12 @@
 import * as React from 'react';
 import moment from 'moment';
-import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, unstable_composeClasses } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, unstable_composeClasses } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 export default function RentCar () {
     const [from, setFrom] = React.useState(moment('2014-08-18T21:11:54'));
@@ -22,6 +24,63 @@ export default function RentCar () {
     const [car, setCar] = React.useState('');
     const [cartype, setCartype] = React.useState('');
 
+    /* Customer API */
+    const getCustomers = async () => {
+        try {
+          const response = await axios.get(`http://127.0.0.1:8000/api/customers/?format=json`)
+          if (response.length > 0 || response.data !== undefined) {
+            setCustomer(response.data);
+          }
+        } catch (error) {
+            console.log(error);
+        }  
+    }
+
+    /* Employee API */
+    const getEmployees = async () => {
+        try {
+          const response = await axios.get(`http://127.0.0.1:8000/api/employees/?format=json`)
+          if (response.length > 0 || response.data !== undefined) {
+            setEmployee(response.data);
+          }
+        } catch (error) {
+            console.log(error);
+        }  
+    }
+    
+    /* Branch API */
+    const getBranches = async () => {
+        try {
+          const response = await axios.get(`http://127.0.0.1:8000/api/branches/?format=json`)
+          if (response.length > 0 || response.data !== undefined) {
+            setBranchfrom(response.data);
+            setBranchto(response.data);
+          }
+        } catch (error) {
+            console.log(error);
+        }  
+    }
+
+    /* Car API */
+    const getCars = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/cars/?format=json`)
+            if (response.length > 0 || response.data !== undefined) {
+            setCar(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }  
+    }
+
+    useEffect(() => {
+        getCustomers();
+        getEmployees();
+        getBranches();
+        getCars();
+    }, []);
+
+
     const handleChange = (event) => {
         /* Add handle changes later */
         if(event.target.id === "manufacturer_input_id"){
@@ -37,15 +96,15 @@ export default function RentCar () {
         if(event.target.id === "totalCost_id"){
             setTotalCost(event.target.value);
         }
-        if(event.target.id === "licencePlate_id"){
-            setLicencePlate(event.target.value);
-        }
+        // if(event.target.id === "licencePlate_id"){
+        //     setLicencePlate(event.target.value);
+        // }
         if(event.target.id === "goldMember_input_id"){
             
             setGoldMember(!event.target.checked);
         }
         
-        if(event.target.id === "customer_select_id"){
+        if(event.target.id === "customer-simple-select"){
             setCustomer(event.target.value);
         }
         if(event.target.id === "employee_select_id"){
@@ -58,32 +117,36 @@ export default function RentCar () {
             setBranchto(event.target.value);
         }
         if(event.target.id === "car_select_id"){
-            setCar(event.target.value);
+            let vehicle = event.target.value;
+            setCar(vehicle.CarID);
+            setCartype(vehicle.Type);
+            setLicencePlate(vehicle.LicencePlate);
         }
-        if(event.target.id === "cartype_select_id"){
-            setCartype(event.target.value);
-        }
+        // if(event.target.id === "cartype_select_id"){
+        //     setCartype(event.target.value);
+        // }
         /*setFrom(newValue);*/
         
     };
 
-    const handleSubmit = (event) =>{
+    const handleSubmit = async (event) =>{
         event.preventDefault();
-
-        const fromValue = from;
-        const toValue = to;
-        const returnValue = returned;
-
-        const totalCostValue = totalCost;
-        const licencePlateValue = licencePlate;
-        const goldMemberValue = goldMember;
-        const customerValue = customer;
-        const employeeValue = employee;
-        const branchfromValue = branchfrom;
-        const branchtoValue = branchto;
-        const carValue = car;
-        const carTypeValue = cartype;
-       
+        await axios.post('http://localhost:8000/api/rentals/', {
+            DateFrom: from,
+            DateTo: to,
+            DateReturned: returned,
+            TotalCost: totalCost,
+            LicencePlate: licencePlate,
+            GoldMember: goldMember,
+            Customer: customer,
+            Employee: employee,
+            BranchFrom: branchfrom,
+            BranchTo: branchto,
+            Car: car,
+            CarType: cartype,
+        })
+        .then(res => console.log(res)) 
+        .catch(err => console.log(err))
     }
 
     return (
@@ -137,67 +200,82 @@ export default function RentCar () {
                     onChange={handleChange}
                     /* inputRef={} */
                 />
-                <TextField
+                {/* <TextField
                     required
                     id="licencePlate_id"
                     label="LicensePlate"
                     onChange={handleChange}
-                    /* inputRef={} */
-                />
+                    /* inputRef={} */}
+                {/*/> */}
 
                 <FormControlLabel control={<Switch id="goldMember_input_id"/>} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember}/>
 
                 <InputLabel id="customer-simple-select-label">Customer</InputLabel>
-                <Select
-                labelId="customer-simple-select-label"
-                id="customer_select_id"
-                value={customer}
-                label="Customer"
-                onChange={handleChange}
+                <select
+                    required
+                    name="customer"
+                    id="customer_select_id"
+                    onChange={handleChange}
                 >
-                </Select>
+                    <option disabled selected value> ー Select Customer* ー </option>
+                    {customer.map((person, index) => {
+                        return <option key={index} value={person.ID}>{person.LastName}, {person.FirstName}</option>
+                    })}
+                </select>
 
                 <InputLabel id="employee-simple-select-label">Employee</InputLabel>
-                <Select
-                labelId="employee-simple-select-label"
-                id="employee_select_id"
-                value={employee}
-                label="Employee"
-                onChange={handleChange}
+                <select
+                    required
+                    name="employee"
+                    id="employee_select_id"
+                    onChange={handleChange}
                 >
-                </Select>
+                    <option disabled selected value> ー Select Employee* ー </option>
+                    {employee.map((person, index) => {
+                        return <option key={index} value={person.ID}>{person.LastName}, {person.FirstName}</option>
+                    })}
+                </select>
 
                 <InputLabel id="branchfrom-simple-select-label">BranchFrom</InputLabel>
-                <Select
-                labelId="branchfrom-simple-select-label"
-                id="branchfrom_select_id"
-                value={branchfrom}
-                label="BranchFrom"
-                onChange={handleChange}
+                <select
+                    required
+                    name="branchfrom"
+                    id="branchfrom_select_id"
+                    onChange={handleChange}
                 >
-                </Select>
+                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    {branchfrom.map((location, index) => {
+                        return <option key={index} value={location.BranchID}>{location.City}</option>
+                    })}
+                </select>
 
-                <InputLabel id="branch-simple-select-label">BranchTo</InputLabel>
-                <Select
-                labelId="branchto-simple-select-label"
-                id="branchto_select_id"
-                value={branchto}
-                label="BranchTo"
-                onChange={handleChange}
+                <InputLabel id="branchto-simple-select-label">BranchTo</InputLabel>
+                <select
+                    required
+                    name="branchto"
+                    id="branchto_select_id"
+                    onChange={handleChange}
                 >
-                </Select>
+                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    {branchto.map((location, index) => {
+                        return <option key={index} value={location.BranchID}>{location.City}</option>
+                    })}
+                </select>
 
                 <InputLabel id="car-simple-select-label">Car</InputLabel>
-                <Select
-                labelId="car-simple-select-label"
-                id="car_select_id"
-                value={car}
-                label="Car"
-                onChange={handleChange}
+                <select
+                    required
+                    name="car"
+                    id="car_select_id"
+                    onChange={handleChange}
                 >
-                </Select>
+                    <option disabled selected value> ー Select Vehicle* ー </option>
+                    {car.map((vehicle, index) => {
+                        return <option key={index} value={vehicle}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicencePlate})</option>
+                    })}
+                </select>
 
-                <InputLabel id="cartype-simple-select-label">Car Type</InputLabel>
+                {/* <InputLabel id="cartype-simple-select-label">Car Type</InputLabel>
                 <Select
                 labelId="cartype-simple-select-label"
                 id="cartype_select_id"
@@ -205,8 +283,12 @@ export default function RentCar () {
                 label="CarType"
                 onChange={handleChange}
                 >
-                </Select>  
-                <Button variant="contained" onClick={handleSubmit}>Submit</Button>    
+                </Select>   */}
+                <Grid container spacing={0} justifyContent="center">
+                    <Grid item xs={3}>
+                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
+                    </Grid>   
+                </Grid>     
             </Container>
         </div>
     );
