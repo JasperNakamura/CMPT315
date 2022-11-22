@@ -66,7 +66,6 @@ export default function UpdateClient() {
             setUnitNumber(event.target.value);
         }
         if (event.target.id === "goldMember_id") {
-            console.log(event.target.checked);
             setGoldMember(event.target.checked);
         }
         /*setFrom(newValue);*/
@@ -156,9 +155,12 @@ export default function UpdateClient() {
 
             <Container>
                 <select onChange={selectedName} value={selected}>
+                    <option value="" disabled={true}>
+                        --Choose Client--
+                    </option>
                     {
                         allUser.map((element, index) =>
-                        <option value={index} key={element.FirstName} disabled={element.disabled}>{element.FirstName}</option >
+                        <option value={index} key={element.FirstName}>{element.FirstName}</option >
                         )
                     }
                 </select>
