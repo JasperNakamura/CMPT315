@@ -5,6 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
+import axios from 'axios';
 
 //icons
 import GradeIcon from '@mui/icons-material/Grade';
@@ -13,7 +14,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
 
 import Checkbox from '@mui/material/Checkbox';
-import { FormGroup } from '@mui/material';
+import { Button, FormGroup } from '@mui/material';
 
 export default function CarFilter() {
     const { useState } = React;
@@ -49,10 +50,54 @@ export default function CarFilter() {
 
     const toggleCheckboxValue = (someList, index, checkState, setChecked) => {
         setChecked(checkState.map((v, i) => (i === index ? !v : v)));
-        if(!checkState[index])
-            console.log(someList[index])    
+        console.log(checkState[index])    
     }
 
+    const handleFilter = () =>{
+        const manufacturerValue = [];
+        const colorValue =[];
+        const modelValue = [];
+        const transmissionValue = [];
+        const fuelValue = [];
+        const driveValue =[];
+
+        fillArray(manufacturers, isManufacturerChecked, manufacturerValue);
+        fillArray(colors, isColorChecked, colorValue);
+        fillArray(models, isModelChecked, modelValue);
+        fillArray(transmissionsType, isTransmissionTypeChecked, transmissionValue);
+        fillArray(fuelType, isFuelTypeChecked, fuelValue);
+        fillArray(driveType, isDriveTypeChecked, driveValue);
+
+        getCars(manufacturerValue);
+    }
+
+    const [cars, setCars] = useState([]);
+
+    const getCars = async (e) => {
+        let j = ''
+        axios({
+            method: 'get',
+            url: 'http://localhost:8000/api/cars/',
+            data: {
+                Manufacturer: e.map((element) => `${element}`).join(',')
+            }
+          }).then((response) => {
+            console.log(response.data);
+          }, (error) => {
+            console.log(error);
+          });
+          /*j =e.map((element) => `${element}`).join(',');
+          console.log(j)*/
+  }
+
+    const fillArray = (objList, objStates, filledList) =>{
+        for( let i=0; i< objStates.length; i++){
+            if(objStates[i] === true){
+                filledList.push(objList[i])  
+            }
+        }
+
+    }
     //need constructor for filters
 
     return (
@@ -216,7 +261,9 @@ export default function CarFilter() {
                     </ListItemButton>
                 </List>
             </Collapse>
-
+            <div>
+                <Button variant="contained" sx={{backgroundColor:'#fff', color: 'black'}} fullWidth={true} onClick={handleFilter}>filter</Button>
+            </div>
         </List>
     );
 }
