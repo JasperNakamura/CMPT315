@@ -5,8 +5,12 @@ import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
-export default function UpdateClient () {
+export default function UpdateClient() {
+    const [ID, setID] = React.useState('');
     const [DOB, setDOB] = React.useState(moment('2014-08-18T21:11:54'));
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
@@ -20,91 +24,153 @@ export default function UpdateClient () {
     const [streetName, setStreetName] = React.useState('');
     const [unitNumber, setUnitNumber] = React.useState('');
     const [goldMember, setGoldMember] = React.useState(false);
-    
+
+
 
     const handleChange = (event) => {
-        if(event.target.id === "DOB_id"){
+        if (event.target.id === "DOB_id") {
             setDOB(event.target.value);
         }
-        if(event.target.id === "firstName_id"){
+        if (event.target.id === "firstName_id") {
             setFirstName(event.target.value);
         }
-        if(event.target.id === "lastName_id"){
+        if (event.target.id === "lastName_id") {
             setLastName(event.target.value);
         }
-        if(event.target.id === "license_id"){
+        if (event.target.id === "license_id") {
             setDriverLicense(event.target.value);
         }
-        if(event.target.id === "email_id"){
+        if (event.target.id === "email_id") {
             setEmail(event.target.value);
         }
-        if(event.target.id === "phone_id"){
-            
+        if (event.target.id === "phone_id") {
+
             setphoneNumber(event.target.value);
         }
-        if(event.target.id === "province_id"){
+        if (event.target.id === "province_id") {
             setProvice(event.target.value);
         }
-        if(event.target.id === "city_id"){
-            setCity(event.target.value);          
+        if (event.target.id === "city_id") {
+            setCity(event.target.value);
         }
-        if(event.target.id === "postal_id"){
-            setPostalCode(event.target.value);        
+        if (event.target.id === "postal_id") {
+            setPostalCode(event.target.value);
         }
-        if(event.target.id === "streetNumber_id"){
+        if (event.target.id === "streetNumber_id") {
             setStreetNumber(event.target.value);
         }
-        if(event.target.id === "streetName_id"){
+        if (event.target.id === "streetName_id") {
             setStreetName(event.target.value);
         }
-        if(event.target.id === "unit_id"){
+        if (event.target.id === "unit_id") {
             setUnitNumber(event.target.value);
         }
-        if(event.target.id === "goldMember_id"){
+        if (event.target.id === "goldMember_id") {
             setGoldMember(!event.target.checked);
         }
         /*setFrom(newValue);*/
     };
-    
 
-    const handleSubmit = (event) =>{
-        event.preventDefault();
+    const [allUser, setAllUser] = useState([{value: '', FirstName: '--Choose an option--', disabled: true}]);
 
-        const dOBValue = DOB;
-        const firstNameValue = firstName;
-        const lastNameValue = lastName;
-        const diverLicenseValue = diverLicense;
-        const emailValue = email;
-        const phoneNumberValue = phoneNumber;
-        const provinceValue = province;
-        const cityValue = city;
-        const postalCodeValue = postalCode;
-        const streetNumberValue = streetNumber;
-        const streetNameValue = streetName;
-        const unitValue = unitNumber;
-        const goldMemberValue = goldMember;
+    useEffect(() => {
+        async function fetchData() {
+            await axios.get('http://localhost:8000/api/customers/')
+                .then(res => setAllUser(res.data))
+                .catch(err => console.log(err))
+        }
+        fetchData();
 
-        console.log("submit: ", dOBValue, firstNameValue, lastNameValue, diverLicenseValue, emailValue, phoneNumberValue, provinceValue, cityValue, postalCodeValue, streetNumberValue, streetNameValue, unitValue, goldMemberValue);
-       
+    }, []);
+
+    function refreshPage() {
+        window.location.reload(false);
+      }
+
+    const handleSubmit = async (event) => {
+        const dOBValue = DOB === null ? null : DOB;
+        const firstNameValue = firstName === null ? null : firstName;
+        const lastNameValue = lastName === null ? null : lastName;
+        const diverLicenseValue = diverLicense === null ? null : diverLicense;
+        const emailValue = email === null ? null : email;
+        const phoneNumberValue = phoneNumber === null ? null : phoneNumber;
+        const provinceValue = province === null ? null : province;
+        const cityValue = city === null ? null : city;
+        const postalCodeValue = postalCode === null ? null : postalCode;
+        const streetNumberValue = streetNumber === null ? null : streetNumber;
+        const streetNameValue = streetName === null ? null : streetName;
+        const unitValue = unitNumber === null ? null : unitNumber;
+        const goldMemberValue = goldMember === null ? null : goldMember;
+
+        axios.put('http://127.0.0.1:8000/api/customers/' + ID+'/', {
+            City: cityValue,
+            DOB: dOBValue,
+            DriversLicense: diverLicenseValue,
+            Email: emailValue,
+            FirstName: firstNameValue,
+            GoldMember: goldMemberValue,
+            LastName: lastNameValue,
+            PhoneNum: phoneNumberValue,
+            PostalCode: postalCodeValue,
+            Province: provinceValue,
+            StreetName: streetNameValue,
+            StreetNumber: streetNumberValue,
+            UnitNumber: unitValue
+        }).then(res => {
+            if(res.status === 200){
+                refreshPage()
+            }
+        })
+
+
     }
-    
+
+    const [selected, setSelected] = useState('');
+
+    const selectedName = (event) => {
+        setSelected(event.target.value);
+        setID(allUser[event.target.value].ID);
+        setDOB(allUser[event.target.value].DOB);
+        setFirstName(allUser[event.target.value].FirstName);
+        setLastName(allUser[event.target.value].LastName);
+        setDriverLicense(allUser[event.target.value].DriversLicense);
+        setEmail(allUser[event.target.value].Email);
+        setphoneNumber(allUser[event.target.value].PhoneNum);
+        setProvice(allUser[event.target.value].Province);
+        setCity(allUser[event.target.value].City);
+        setPostalCode(allUser[event.target.value].PostalCode);
+        setStreetNumber(allUser[event.target.value].StreetNumber);
+        setStreetName(allUser[event.target.value].StreetName);
+        setUnitNumber(allUser[event.target.value].UnitNumber);
+        setGoldMember(allUser[event.target.value].GoldMember);
+    }
 
     return (
         <div>
-            <Header/>
+            <Header />
             <Container>
                 <h1>Update Client Information</h1>
             </Container>
 
             <Container>
+                <select onChange={selectedName} value={selected}>
+                    {
+                        allUser.map((element, index) =>
+                        <option value={index} key={element.FirstName} disabled={element.disabled}>{element.FirstName}</option >
+                        )
+                    }
+                </select>
+            </Container>
+
+            <Container>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                     <DesktopDatePicker
-                    label="DOB"
-                    id="DOB_id"
-                    inputFormat="MM/DD/YYYY"
-                    value={DOB}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
+                        label="DOB"
+                        id="DOB_id"
+                        inputFormat="MM/DD/YYYY"
+                        value={DOB}
+                        onChange={handleChange}
+                        renderInput={(params) => <TextField {...params} />}
                     />
                 </LocalizationProvider>
             </Container>
@@ -116,7 +182,7 @@ export default function UpdateClient () {
                     label="FirstName"
                     value={firstName}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -124,7 +190,7 @@ export default function UpdateClient () {
                     label="LastName"
                     value={lastName}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -133,7 +199,7 @@ export default function UpdateClient () {
                     type="number"
                     value={diverLicense}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -142,7 +208,7 @@ export default function UpdateClient () {
                     type="email"
                     value={email}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -151,7 +217,7 @@ export default function UpdateClient () {
                     type="tel"
                     value={phoneNumber}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -159,7 +225,7 @@ export default function UpdateClient () {
                     label="Province"
                     value={province}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -167,7 +233,7 @@ export default function UpdateClient () {
                     label="City"
                     value={city}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -175,16 +241,15 @@ export default function UpdateClient () {
                     label="PostalCode"
                     value={postalCode}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
                     id="streetNumber_id"
                     label="StreetNumber"
-                    type="number"
                     value={streetNumber}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
@@ -192,22 +257,22 @@ export default function UpdateClient () {
                     label="StreetName"
                     value={streetName}
                     onChange={handleChange}
-                    /* inputRef={} */
+                /* inputRef={} */
                 />
                 <TextField
                     required
                     id="unit_id"
                     label="UnitNumber"
-                    type="number"
                     value={unitNumber}
                     onChange={handleChange}
                 />
 
 
-                <FormControlLabel control={<Switch id="goldMember_id"/>} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember}/>
+                <FormControlLabel control={<Switch id="goldMember_id" />} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember} />
 
-                
-                <Button variant="contained" onClick={handleSubmit}>Submit</Button>    
+                <div >
+                    <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+                </div>
             </Container>
         </div>
     );
