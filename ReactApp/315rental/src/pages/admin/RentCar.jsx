@@ -13,23 +13,27 @@ export default function RentCar () {
     const [to, setTo] = React.useState(moment('2014-08-18T21:11:54'));
     const [returned, setReturned] = React.useState(moment('2014-08-18T21:11:54'));
 
-    const [totalCost, setTotalCost] = React.useState([]);
-    const [licencePlate, setLicencePlate] = React.useState([]);
+    const [totalCost, setTotalCost] = React.useState(0.0);
+    const [licensePlate, setLicensePlate] = React.useState('');
     const [goldMember, setGoldMember] = React.useState(false);
+    const [customer, setCustomer] = React.useState(0);
+    const [employee, setEmployee] = React.useState(0);
+    const [branchfrom, setBranchfrom] = React.useState(0);
+    const [branchto, setBranchto] = React.useState(0);
+    const [car, setCar] = React.useState(0);
+    const [cartype, setCartype] = React.useState(0);
 
-    const [customer, setCustomer] = React.useState([]);
-    const [employee, setEmployee] = React.useState([]);
-    const [branchfrom, setBranchfrom] = React.useState([]);
-    const [branchto, setBranchto] = React.useState([]);
-    const [car, setCar] = React.useState([]);
-    const [cartype, setCartype] = React.useState([]);
+    const [customers, setCustomers] = React.useState([]);
+    const [employees, setEmployees] = React.useState([]);
+    const [branches, setBranches] = React.useState([]);
+    const [cars, setCars] = React.useState([]);
 
     /* Customer API */
     const getCustomers = async () => {
         try {
           const response = await axios.get(`http://127.0.0.1:8000/api/customers/?format=json`)
           if (response.length > 0 || response.data !== undefined) {
-            setCustomer(response.data);
+            setCustomers(response.data);
           }
         } catch (error) {
             console.log(error);
@@ -41,7 +45,7 @@ export default function RentCar () {
         try {
           const response = await axios.get(`http://127.0.0.1:8000/api/employees/?format=json`)
           if (response.length > 0 || response.data !== undefined) {
-            setEmployee(response.data);
+            setEmployees(response.data);
           }
         } catch (error) {
             console.log(error);
@@ -53,8 +57,7 @@ export default function RentCar () {
         try {
           const response = await axios.get(`http://127.0.0.1:8000/api/branches/?format=json`)
           if (response.length > 0 || response.data !== undefined) {
-            setBranchfrom(response.data);
-            setBranchto(response.data);
+            setBranches(response.data);
           }
         } catch (error) {
             console.log(error);
@@ -66,7 +69,7 @@ export default function RentCar () {
         try {
             const response = await axios.get(`http://127.0.0.1:8000/api/cars/?format=json`)
             if (response.length > 0 || response.data !== undefined) {
-            setCar(response.data);
+            setCars(response.data);
             }
         } catch (error) {
             console.log(error);
@@ -81,8 +84,7 @@ export default function RentCar () {
     }, []);
 
 
-    const handleChange = (event) => {
-        /* Add handle changes later */
+    const handleChange = async (event) => {
         if(event.target.id === "manufacturer_input_id"){
             setFrom(event.target.value);
         }
@@ -94,49 +96,57 @@ export default function RentCar () {
         }
 
         if(event.target.id === "totalCost_id"){
-            setTotalCost(event.target.value);
+            setTotalCost(parseFloat(event.target.value));
         }
-        // if(event.target.id === "licencePlate_id"){
-        //     setLicencePlate(event.target.value);
-        // }
-        if(event.target.id === "goldMember_input_id"){
-            
-            setGoldMember(!event.target.checked);
-        }
-        
-        if(event.target.id === "customer-simple-select"){
-            setCustomer(event.target.value);
+        if(event.target.id === "customer_select_id"){
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/customers/${event.target.value}/?format=json`)
+                if (response.length > 0 || response.data !== undefined) {
+                let person = response.data;
+                setCustomer(parseInt(person.ID));
+                setGoldMember(person.GoldMember);
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
         if(event.target.id === "employee_select_id"){
-            setEmployee(event.target.value);          
+            setEmployee(parseInt(event.target.value));          
         }
         if(event.target.id === "branchfrom_select_id"){
-            setBranchfrom(event.target.value);        
+            setBranchfrom(parseInt(event.target.value));        
         }
         if(event.target.id === "branchto_select_id"){
-            setBranchto(event.target.value);
+            setBranchto(parseInt(event.target.value));
         }
         if(event.target.id === "car_select_id"){
-            let vehicle = event.target.value;
-            setCar(vehicle.CarID);
-            setCartype(vehicle.Type);
-            setLicencePlate(vehicle.LicencePlate);
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/cars/${event.target.value}/?format=json`)
+                if (response.length > 0 || response.data !== undefined) {
+                let vehicle = response.data;
+                console.log(vehicle);
+                setCar(parseInt(vehicle.CarID));
+                setCartype(parseInt(vehicle.Type));
+                setLicensePlate(vehicle.LicencePlate);
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
-        // if(event.target.id === "cartype_select_id"){
-        //     setCartype(event.target.value);
-        // }
-        /*setFrom(newValue);*/
-        
     };
 
     const handleSubmit = async (event) =>{
         event.preventDefault();
         await axios.post('http://localhost:8000/api/rentals/', {
-            DateFrom: from,
-            DateTo: to,
-            DateReturned: returned,
+            // temp:
+            DateFrom: "2014-08-18",
+            DateTo: "2014-08-18",
+            DateReturned: "2014-08-18",
+            // DateFrom: from,
+            // DateTo: to,
+            // DateReturned: returned,
             TotalCost: totalCost,
-            LicencePlate: licencePlate,
+            LicensePlate: licensePlate,
             GoldMember: goldMember,
             Customer: customer,
             Employee: employee,
@@ -146,7 +156,7 @@ export default function RentCar () {
             CarType: cartype,
         })
         .then(res => console.log(res)) 
-        .catch(err => console.log(err))
+        .catch(err => console.log(err));
     }
 
     return (
@@ -208,7 +218,7 @@ export default function RentCar () {
                     /* inputRef={} */}
                 {/*/> */}
 
-                <FormControlLabel control={<Switch id="goldMember_input_id"/>} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember}/>
+                {/* <FormControlLabel control={<Switch id="goldMember_input_id"/>} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember}/> */}
 
                 <InputLabel id="customer-simple-select-label">Customer</InputLabel>
                 <select
@@ -218,7 +228,7 @@ export default function RentCar () {
                     onChange={handleChange}
                 >
                     <option disabled selected value> ー Select Customer* ー </option>
-                    {customer.map((person, index) => {
+                    {customers.map((person, index) => {
                         return <option key={index} value={person.ID}>{person.LastName}, {person.FirstName}</option>
                     })}
                 </select>
@@ -231,7 +241,7 @@ export default function RentCar () {
                     onChange={handleChange}
                 >
                     <option disabled selected value> ー Select Employee* ー </option>
-                    {employee.map((person, index) => {
+                    {employees.map((person, index) => {
                         return <option key={index} value={person.ID}>{person.LastName}, {person.FirstName}</option>
                     })}
                 </select>
@@ -244,7 +254,7 @@ export default function RentCar () {
                     onChange={handleChange}
                 >
                     <option disabled selected value> ー Select Branch Location* ー </option>
-                    {branchfrom.map((location, index) => {
+                    {branches.map((location, index) => {
                         return <option key={index} value={location.BranchID}>{location.City}</option>
                     })}
                 </select>
@@ -257,7 +267,7 @@ export default function RentCar () {
                     onChange={handleChange}
                 >
                     <option disabled selected value> ー Select Branch Location* ー </option>
-                    {branchto.map((location, index) => {
+                    {branches.map((location, index) => {
                         return <option key={index} value={location.BranchID}>{location.City}</option>
                     })}
                 </select>
@@ -270,8 +280,8 @@ export default function RentCar () {
                     onChange={handleChange}
                 >
                     <option disabled selected value> ー Select Vehicle* ー </option>
-                    {car.map((vehicle, index) => {
-                        return <option key={index} value={vehicle}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicencePlate})</option>
+                    {cars.map((vehicle, index) => {
+                        return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicencePlate})</option>
                     })}
                 </select>
 
