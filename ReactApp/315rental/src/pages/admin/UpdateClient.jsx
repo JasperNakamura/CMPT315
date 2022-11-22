@@ -66,7 +66,7 @@ export default function UpdateClient() {
             setUnitNumber(event.target.value);
         }
         if (event.target.id === "goldMember_id") {
-            setGoldMember(!event.target.checked);
+            setGoldMember(event.target.checked);
         }
         /*setFrom(newValue);*/
     };
@@ -143,6 +143,7 @@ export default function UpdateClient() {
         setStreetName(allUser[event.target.value].StreetName);
         setUnitNumber(allUser[event.target.value].UnitNumber);
         setGoldMember(allUser[event.target.value].GoldMember);
+        console.log(allUser[event.target.value].GoldMember);
     }
 
     return (
@@ -154,9 +155,12 @@ export default function UpdateClient() {
 
             <Container>
                 <select onChange={selectedName} value={selected}>
+                    <option value="" disabled={true}>
+                        --Choose Client--
+                    </option>
                     {
                         allUser.map((element, index) =>
-                        <option value={index} key={element.FirstName} disabled={element.disabled}>{element.FirstName}</option >
+                        <option value={index} key={element.FirstName}>{element.FirstName}</option >
                         )
                     }
                 </select>
@@ -268,7 +272,7 @@ export default function UpdateClient() {
                 />
 
 
-                <FormControlLabel control={<Switch id="goldMember_id" />} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember} />
+                <FormControlLabel control={<Switch id="goldMember_id" checked={goldMember}/>} label="GoldMember" labelPlacement='start'  onChange={handleChange} />
 
                 <div >
                     <Button variant="contained" onClick={handleSubmit}>Submit</Button>
