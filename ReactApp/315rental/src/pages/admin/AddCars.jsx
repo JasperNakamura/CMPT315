@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Box, Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from 'axios';
-
-const url = 'localhost:8000/api/cars';
 
 export default function AddCars () {
     
@@ -53,7 +51,8 @@ export default function AddCars () {
     /* Axios post location */
     const handleSubmit = async (event) =>{
         event.preventDefault();
-        await axios.post('http://localhost:8000/api/cars/', {
+    
+        await axios.post('http://127.0.0.1:8000/api/cars/', {
             Manufacturer: manufacturer, 
             Model: model,
             FuelType: fuelType,
@@ -61,15 +60,14 @@ export default function AddCars () {
             LicensePlate: licensePlate,
             Status: available,
             Mileage: mileage,
-            Branch: branch,
-            Type: carType,
+            Branch: branch[bIndex].BranchID,
+            Type: carType[cIndex].TypeID,
         })
         .then(res => console.log(res)) 
         .catch(err => console.log(err))
     }
 
     const handleChange = (event) => {
-        console.log('event', event.target);
         if(event.target.id === "manufacturer_input_id"){
             setMenufacturer(event.target.value);
         }
@@ -92,12 +90,15 @@ export default function AddCars () {
             setMileage(event.target.value);
         }
         if(event.target.name === "branch_input_id"){
-            setBranch(event.target.value);
+            setbIndex(event.target.value);
         }
         if(event.target.name === "cartype_input_id"){
-            setCarType(event.target.value);
+            setcIndex(event.target.value);
         }
     };
+
+    const [bIndex, setbIndex] = React.useState(0);
+    const [cIndex, setcIndex] = React.useState(0);
 
     return (
         <div>
@@ -176,15 +177,15 @@ export default function AddCars () {
                         >
                             <option disabled selected value> ー Select Branch Location* ー </option>
                             {branch.map((location, index) => {
-                                console.log(location.City);
                                 return <option key={index} value={location.BranchID}>{location.City}</option>
                             })}
                         </select>
 
+                        <h2>Car Type</h2>
                         <select
                             required
-                            name="clients"
-                            id="client-simple-select"
+                            name="cartype"
+                            id="cartype-simple-select"
                             onChange={handleChange}
                         >
                             <option disabled selected value> ー Select Car Type* ー </option>
