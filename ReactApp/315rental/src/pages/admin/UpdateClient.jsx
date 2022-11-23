@@ -25,12 +25,8 @@ export default function UpdateClient() {
     const [unitNumber, setUnitNumber] = React.useState('');
     const [goldMember, setGoldMember] = React.useState(false);
 
-
-
     const handleChange = (event) => {
-        if (event.target.id === "DOB_id") {
-            setDOB(event.target.value);
-        }
+        setDOB(event);
         if (event.target.id === "firstName_id") {
             setFirstName(event.target.value);
         }
@@ -44,7 +40,6 @@ export default function UpdateClient() {
             setEmail(event.target.value);
         }
         if (event.target.id === "phone_id") {
-
             setphoneNumber(event.target.value);
         }
         if (event.target.id === "province_id") {
@@ -68,7 +63,6 @@ export default function UpdateClient() {
         if (event.target.id === "goldMember_id") {
             setGoldMember(event.target.checked);
         }
-        /*setFrom(newValue);*/
     };
 
     const [allUser, setAllUser] = useState([{value: '', FirstName: '--Choose an option--', disabled: true}]);
@@ -88,7 +82,7 @@ export default function UpdateClient() {
       }
 
     const handleSubmit = async (event) => {
-        const dOBValue = DOB === null ? null : DOB;
+        const dOBValue = DOB._i === null ? null : DOB._i;
         const firstNameValue = firstName === null ? null : firstName;
         const lastNameValue = lastName === null ? null : lastName;
         const diverLicenseValue = diverLicense === null ? null : diverLicense;
@@ -121,8 +115,6 @@ export default function UpdateClient() {
                 refreshPage()
             }
         })
-
-
     }
 
     const [selected, setSelected] = useState('');
@@ -143,7 +135,6 @@ export default function UpdateClient() {
         setStreetName(allUser[event.target.value].StreetName);
         setUnitNumber(allUser[event.target.value].UnitNumber);
         setGoldMember(allUser[event.target.value].GoldMember);
-        console.log(allUser[event.target.value].GoldMember);
     }
 
     return (
