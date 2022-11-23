@@ -1,6 +1,6 @@
 import * as React from 'react';
 import moment from 'moment';
-import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField, unstable_composeClasses } from "@mui/material";
+import { Button, Grid, InputLabel, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -89,7 +89,7 @@ export default function RentCar () {
 
     const handleChange = async (event) => {
         //Calendars do not have event.target
-        if (event.target != undefined) {
+        if (event.target !== undefined) {
             if(event.target.id === "totalCost_id"){
                 setTotalCost(parseFloat(event.target.value));
             }
@@ -129,27 +129,30 @@ export default function RentCar () {
                 }
             }
         }
-
-        //Calendar uses just event
-        console.log(event._locale);
-        setfromCal(event);
-        setFrom(event._d.toLocaleString());
-        settoCal(event);
-        setTo(event._d.toLocaleString());
-        setreturnedCal(event);
-        setReturned(event._d.toLocaleString());
     };
+
+    const handlefromCalChange = async (event) => {
+        setfromCal(event);
+        setFrom(event._d.toLocaleString().slice(0, 10));        
+        console.log(from)
+    }
+
+    const handletoCalChange = async (event) => {
+        settoCal(event);
+        setTo(event._d.toLocaleString().slice(0, 10));
+    }
+
+    const handlereturnCalChange = async (event) => {
+        setreturnedCal(event);
+        setReturned(event._d.toLocaleString().slice(0, 10));
+    }
 
     const handleSubmit = async (event) =>{
         event.preventDefault();
         await axios.post('http://localhost:8000/api/rentals/', {
-            // temp:
-            DateFrom: "2014-08-18",
-            DateTo: "2014-08-18",
-            DateReturned: "2014-08-18",
-            // DateFrom: from,
-            // DateTo: to,
-            // DateReturned: returned,
+            DateFrom: from,
+            DateTo: to,
+            DateReturned: returned,
             TotalCost: totalCost,
             LicensePlate: licensePlate,
             GoldMember: goldMember,
@@ -181,7 +184,7 @@ export default function RentCar () {
                         inputFormat="MM/DD/YYYY"
                         disablePast
                         value={fromCal}
-                        onChange={handleChange}
+                        onChange={handlefromCalChange}
                         renderInput={(params) => <TextField {...params} />}
                         />
                         </LocalizationProvider>
@@ -195,7 +198,7 @@ export default function RentCar () {
                             inputFormat="MM/DD/YYYY"
                             disablePast
                             value={toCal}
-                            onChange={handleChange}
+                            onChange={handletoCalChange}
                             renderInput={(params) => <TextField {...params} />}
                             />
                         </LocalizationProvider>
@@ -209,14 +212,13 @@ export default function RentCar () {
                             inputFormat="MM/DD/YYYY"
                             disablePast
                             value={returnedCal}
-                            onChange={handleChange}
+                            onChange={handlereturnCalChange}
                             renderInput={(params) => <TextField {...params} />}
                             />
                         </LocalizationProvider>
                     </Grid>
                 </Grid> 
             </Container>
-            
 
             <Container>
                 <TextField

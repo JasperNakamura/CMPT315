@@ -1,6 +1,5 @@
 import * as React from 'react';
-import moment from 'moment';
-import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -27,7 +26,7 @@ export default function UpdateClient() {
     const [goldMember, setGoldMember] = React.useState(false);
 
     const handleChange = (event) => {
-        if (event.target != undefined) {
+        if (event.target !== undefined) {
             if (event.target.id === "firstName_id") {
             setFirstName(event.target.value);
             }

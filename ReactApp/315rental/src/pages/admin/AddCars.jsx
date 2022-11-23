@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Box, Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from 'axios';
-
-const url = 'localhost:8000/api/cars';
 
 export default function AddCars () {
     
