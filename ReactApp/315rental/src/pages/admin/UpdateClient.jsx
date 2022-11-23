@@ -11,7 +11,8 @@ import { useState } from 'react';
 
 export default function UpdateClient() {
     const [ID, setID] = React.useState('');
-    const [DOB, setDOB] = React.useState(moment('2014-08-18T21:11:54'));
+    const [DOB, setDOB] = React.useState('');
+    const [calDate, setcalDate] = React.useState(null);
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [diverLicense, setDriverLicense] = React.useState('');
@@ -26,42 +27,48 @@ export default function UpdateClient() {
     const [goldMember, setGoldMember] = React.useState(false);
 
     const handleChange = (event) => {
-        setDOB(event);
-        if (event.target.id === "firstName_id") {
+        if (event.target != undefined) {
+            if (event.target.id === "firstName_id") {
             setFirstName(event.target.value);
+            }
+            if (event.target.id === "lastName_id") {
+                setLastName(event.target.value);
+            }
+            if (event.target.id === "license_id") {
+                setDriverLicense(event.target.value);
+            }
+            if (event.target.id === "email_id") {
+                setEmail(event.target.value);
+            }
+            if (event.target.id === "phone_id") {
+                setphoneNumber(event.target.value);
+            }
+            if (event.target.id === "province_id") {
+                setProvice(event.target.value);
+            }
+            if (event.target.id === "city_id") {
+                setCity(event.target.value);
+            }
+            if (event.target.id === "postal_id") {
+                setPostalCode(event.target.value);
+            }
+            if (event.target.id === "streetNumber_id") {
+                setStreetNumber(event.target.value);
+            }
+            if (event.target.id === "streetName_id") {
+                setStreetName(event.target.value);
+            }
+            if (event.target.id === "unit_id") {
+                setUnitNumber(event.target.value);
+            }
+            if (event.target.id === "goldMember_id") {
+                setGoldMember(event.target.checked);
+            }
         }
-        if (event.target.id === "lastName_id") {
-            setLastName(event.target.value);
-        }
-        if (event.target.id === "license_id") {
-            setDriverLicense(event.target.value);
-        }
-        if (event.target.id === "email_id") {
-            setEmail(event.target.value);
-        }
-        if (event.target.id === "phone_id") {
-            setphoneNumber(event.target.value);
-        }
-        if (event.target.id === "province_id") {
-            setProvice(event.target.value);
-        }
-        if (event.target.id === "city_id") {
-            setCity(event.target.value);
-        }
-        if (event.target.id === "postal_id") {
-            setPostalCode(event.target.value);
-        }
-        if (event.target.id === "streetNumber_id") {
-            setStreetNumber(event.target.value);
-        }
-        if (event.target.id === "streetName_id") {
-            setStreetName(event.target.value);
-        }
-        if (event.target.id === "unit_id") {
-            setUnitNumber(event.target.value);
-        }
-        if (event.target.id === "goldMember_id") {
-            setGoldMember(event.target.checked);
+        
+        else {
+            setcalDate(event);
+            setDOB(event._d.toLocaleString());
         }
     };
 
@@ -82,7 +89,9 @@ export default function UpdateClient() {
       }
 
     const handleSubmit = async (event) => {
-        const dOBValue = DOB._i === null ? null : DOB._i;
+        let dobString = DOB === null ? null : DOB;
+        const dobValue = dobString.slice(0, 10);
+        console.log(dobValue);
         const firstNameValue = firstName === null ? null : firstName;
         const lastNameValue = lastName === null ? null : lastName;
         const diverLicenseValue = diverLicense === null ? null : diverLicense;
@@ -98,7 +107,7 @@ export default function UpdateClient() {
 
         axios.put('http://127.0.0.1:8000/api/customers/' + ID+'/', {
             City: cityValue,
-            DOB: dOBValue,
+            DOB: dobValue,
             DriversLicense: diverLicenseValue,
             Email: emailValue,
             FirstName: firstNameValue,
@@ -122,7 +131,7 @@ export default function UpdateClient() {
     const selectedName = (event) => {
         setSelected(event.target.value);
         setID(allUser[event.target.value].ID);
-        setDOB(allUser[event.target.value].DOB);
+        setcalDate(allUser[event.target.value].DOB);
         setFirstName(allUser[event.target.value].FirstName);
         setLastName(allUser[event.target.value].LastName);
         setDriverLicense(allUser[event.target.value].DriversLicense);
@@ -166,7 +175,8 @@ export default function UpdateClient() {
                             label="DOB"
                             id="DOB_id"
                             inputFormat="MM/DD/YYYY"
-                            value={DOB}
+                            disableFuture
+                            value={calDate}
                             onChange={handleChange}
                             renderInput={(params) => <TextField {...params} />}
                         />

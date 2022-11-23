@@ -9,9 +9,12 @@ import { useEffect } from 'react';
 import axios from 'axios';
 
 export default function RentCar () {
-    const [from, setFrom] = React.useState(moment('2014-08-18T21:11:54'));
-    const [to, setTo] = React.useState(moment('2014-08-18T21:11:54'));
-    const [returned, setReturned] = React.useState(moment('2014-08-18T21:11:54'));
+    const [from, setFrom] = React.useState('');
+    const [to, setTo] = React.useState('');
+    const [returned, setReturned] = React.useState('');
+    const [fromCal, setfromCal] = React.useState(moment());
+    const [toCal, settoCal] = React.useState(moment());
+    const [returnedCal, setreturnedCal] = React.useState(moment());
 
     const [totalCost, setTotalCost] = React.useState(0.0);
     const [licensePlate, setLicensePlate] = React.useState('');
@@ -85,54 +88,56 @@ export default function RentCar () {
 
 
     const handleChange = async (event) => {
-        if(event.target.id === "manufacturer_input_id"){
-            setFrom(event.target.value);
-        }
-        if(event.target.id === "manufacturer_input_id"){
-            setTo(event.target.value);
-        }
-        if(event.target.id === "manufacturer_input_id"){
-            setReturned(event.target.value);
+        //Calendars do not have event.target
+        if (event.target != undefined) {
+            if(event.target.id === "totalCost_id"){
+                setTotalCost(parseFloat(event.target.value));
+            }
+            if(event.target.id === "customer_select_id"){
+                try {
+                    const response = await axios.get(`http://127.0.0.1:8000/api/customers/${event.target.value}/?format=json`)
+                    if (response.length > 0 || response.data !== undefined) {
+                    let person = response.data;
+                    setCustomer(parseInt(person.ID));
+                    setGoldMember(person.GoldMember);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            if(event.target.id === "employee_select_id"){
+                setEmployee(parseInt(event.target.value));          
+            }
+            if(event.target.id === "branchfrom_select_id"){
+                setBranchfrom(parseInt(event.target.value));        
+            }
+            if(event.target.id === "branchto_select_id"){
+                setBranchto(parseInt(event.target.value));
+            }
+            if(event.target.id === "car_select_id"){
+                try {
+                    const response = await axios.get(`http://127.0.0.1:8000/api/cars/${event.target.value}/?format=json`)
+                    if (response.length > 0 || response.data !== undefined) {
+                    let vehicle = response.data;
+                    console.log(vehicle);
+                    setCar(parseInt(vehicle.CarID));
+                    setCartype(parseInt(vehicle.Type));
+                    setLicensePlate(vehicle.LicensePlate);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
         }
 
-        if(event.target.id === "totalCost_id"){
-            setTotalCost(parseFloat(event.target.value));
-        }
-        if(event.target.id === "customer_select_id"){
-            try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/customers/${event.target.value}/?format=json`)
-                if (response.length > 0 || response.data !== undefined) {
-                let person = response.data;
-                setCustomer(parseInt(person.ID));
-                setGoldMember(person.GoldMember);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        if(event.target.id === "employee_select_id"){
-            setEmployee(parseInt(event.target.value));          
-        }
-        if(event.target.id === "branchfrom_select_id"){
-            setBranchfrom(parseInt(event.target.value));        
-        }
-        if(event.target.id === "branchto_select_id"){
-            setBranchto(parseInt(event.target.value));
-        }
-        if(event.target.id === "car_select_id"){
-            try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/cars/${event.target.value}/?format=json`)
-                if (response.length > 0 || response.data !== undefined) {
-                let vehicle = response.data;
-                console.log(vehicle);
-                setCar(parseInt(vehicle.CarID));
-                setCartype(parseInt(vehicle.Type));
-                setLicensePlate(vehicle.LicencePlate);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        //Calendar uses just event
+        console.log(event._locale);
+        setfromCal(event);
+        setFrom(event._d.toLocaleString());
+        settoCal(event);
+        setTo(event._d.toLocaleString());
+        setreturnedCal(event);
+        setReturned(event._d.toLocaleString());
     };
 
     const handleSubmit = async (event) =>{
@@ -167,39 +172,51 @@ export default function RentCar () {
             </Container>
 
             <Container>
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <DesktopDatePicker
-                    label="DateFrom"
-                    id="dateFrom_id"
-                    inputFormat="MM/DD/YYYY"
-                    value={from}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
+               <Grid container spacing={2} justifyContent="center" mb={2}>
+                    <Grid item xs={4}>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <DesktopDatePicker
+                        label="DateFrom"
+                        className="dateFrom_id"
+                        inputFormat="MM/DD/YYYY"
+                        disablePast
+                        value={fromCal}
+                        onChange={handleChange}
+                        renderInput={(params) => <TextField {...params} />}
+                        />
+                        </LocalizationProvider>
+                    </Grid>
+                    
+                    <Grid item xs={4}>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <DesktopDatePicker
+                            label="DateTo"
+                            className="dateTo_id"
+                            inputFormat="MM/DD/YYYY"
+                            disablePast
+                            value={toCal}
+                            onChange={handleChange}
+                            renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+                    </Grid>
 
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <DesktopDatePicker
-                    label="DateTo"
-                    id="dateTo_id"
-                    inputFormat="MM/DD/YYYY"
-                    value={to}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
-
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                    <DesktopDatePicker
-                    label="DateReturned"
-                    id="dateReturn_id"
-                    inputFormat="MM/DD/YYYY"
-                    value={returned}
-                    onChange={handleChange}
-                    renderInput={(params) => <TextField {...params} />}
-                    />
-                </LocalizationProvider>
+                    <Grid item xs={4}>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <DesktopDatePicker
+                            label="DateReturned"
+                            className="dateReturn_id"
+                            inputFormat="MM/DD/YYYY"
+                            disablePast
+                            value={returnedCal}
+                            onChange={handleChange}
+                            renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+                    </Grid>
+                </Grid> 
             </Container>
+            
 
             <Container>
                 <TextField
@@ -208,17 +225,7 @@ export default function RentCar () {
                     label="TotalCost"
                     type="number"
                     onChange={handleChange}
-                    /* inputRef={} */
                 />
-                {/* <TextField
-                    required
-                    id="licencePlate_id"
-                    label="LicensePlate"
-                    onChange={handleChange}
-                    /* inputRef={} */}
-                {/*/> */}
-
-                {/* <FormControlLabel control={<Switch id="goldMember_input_id"/>} label="GoldMember" labelPlacement='start' defaultChecked={false} onChange={handleChange} value={goldMember}/> */}
 
                 <InputLabel id="customer-simple-select-label">Customer</InputLabel>
                 <select
@@ -281,19 +288,10 @@ export default function RentCar () {
                 >
                     <option disabled selected value> ー Select Vehicle* ー </option>
                     {cars.map((vehicle, index) => {
-                        return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicencePlate})</option>
+                        return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicensePlate})</option>
                     })}
                 </select>
 
-                {/* <InputLabel id="cartype-simple-select-label">Car Type</InputLabel>
-                <Select
-                labelId="cartype-simple-select-label"
-                id="cartype_select_id"
-                value={cartype}
-                label="CarType"
-                onChange={handleChange}
-                >
-                </Select>   */}
                 <Grid container spacing={0} justifyContent="center">
                     <Grid item xs={3}>
                         <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
