@@ -133,18 +133,18 @@ export default function RentCar () {
 
     const handlefromCalChange = async (event) => {
         setfromCal(event);
-        setFrom(event._d.toLocaleString().slice(0, 10));        
+        setFrom(event._d.toLocaleString("sv-SE").slice(0, 10));        
         console.log(from)
     }
 
     const handletoCalChange = async (event) => {
         settoCal(event);
-        setTo(event._d.toLocaleString().slice(0, 10));
+        setTo(event._d.toLocaleString("sv-SE").slice(0, 10));
     }
 
     const handlereturnCalChange = async (event) => {
         setreturnedCal(event);
-        setReturned(event._d.toLocaleString().slice(0, 10));
+        setReturned(event._d.toLocaleString("sv-SE").slice(0, 10));
     }
 
     const handleSubmit = async (event) =>{

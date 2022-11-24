@@ -67,7 +67,8 @@ export default function UpdateClient() {
         
         else {
             setcalDate(event);
-            setDOB(event._d.toLocaleString());
+            setDOB(event._d.toLocaleString("sv-SE"));
+
         }
     };
 
@@ -89,8 +90,7 @@ export default function UpdateClient() {
 
     const handleSubmit = async (event) => {
         let dobString = DOB === null ? null : DOB;
-        const dobValue = dobString.slice(0, 10);
-        console.log(dobValue);
+        const dobValue = dobString.slice(0, 10).replace("///g", "-", 2);
         const firstNameValue = firstName === null ? null : firstName;
         const lastNameValue = lastName === null ? null : lastName;
         const diverLicenseValue = diverLicense === null ? null : diverLicense;
@@ -131,6 +131,7 @@ export default function UpdateClient() {
         setSelected(event.target.value);
         setID(allUser[event.target.value].ID);
         setcalDate(allUser[event.target.value].DOB);
+        setDOB(allUser[event.target.value].DOB);
         setFirstName(allUser[event.target.value].FirstName);
         setLastName(allUser[event.target.value].LastName);
         setDriverLicense(allUser[event.target.value].DriversLicense);
@@ -173,7 +174,7 @@ export default function UpdateClient() {
                         <DesktopDatePicker
                             label="DOB"
                             id="DOB_id"
-                            inputFormat="MM/DD/YYYY"
+                            inputFormat="MM-DD-YYYY"
                             disableFuture
                             value={calDate}
                             onChange={handleChange}
