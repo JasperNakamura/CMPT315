@@ -9,27 +9,75 @@ export default function Footer() {
         px={{xs: 2, sm: 5}}
         py={{xs: 2, sm: 5}}
         mt={{xs: 2, sm: 5}}
-        bgcolor="text.secondary"
+        bgcolor="#130026"
         color="white">
-        <Container maxWidth="lg">
+        
+        <Container maxWidth="lg" >
           <Grid container spacing={5}>
             <Grid item xs={12} sm={4}>
-              <Box borderBottom={1}>
-                <b>Help</b>
+              <Box borderBottom={1} mb={1}>
+                <b>Company</b>
               </Box>
               <Box>
-                <Link href="/" color="inherit">
-                  Contact
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  About
                 </Link>
               </Box>
               <Box>
-                <Link href="/" color="inherit">
-                  Support
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Careers
                 </Link>
               </Box>
               <Box>
-                <Link href="/" color="inherit">
-                  Privacy
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Discover
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  How we work
+                </Link>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Box borderBottom={1} mb={1}>
+                <b>Contact</b>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Help/FAQ
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Press
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Affiliates
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Advertise with us
+                </Link>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Box borderBottom={1} mb={1}>
+                <b>More</b>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Car fees
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/" sx={{textDecoration: 'none'}} color="inherit">
+                  Cars
                 </Link>
               </Box>
             </Grid>

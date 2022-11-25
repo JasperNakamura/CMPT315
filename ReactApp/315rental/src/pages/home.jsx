@@ -1,7 +1,5 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import "./css/Normalize.css"
-import "./css/Home.css"
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import * as React from 'react';
@@ -10,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Button, CardActionArea } from '@mui/material';
+import { Button, CardActionArea, CssBaseline, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 import PickupSearch from "../components/LocationPSearch";
@@ -19,6 +17,7 @@ import DatePickup from "../components/DateDSelector";
 import DateDropoff from "../components/DatePSelector";
 import TimePickup from "../components/TimePSelector";
 import TimeDropoff from "../components/TimeDSelector";
+import { Container } from "@mui/system";
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -64,61 +63,73 @@ const Home = () => {
       )
   }
   return (
-    <div>
+    <Box bgcolor='#21033a'>
+      {/* MUI's CSS Normalize */}
+      <CssBaseline/>
       {/*Header section from component*/}
       <Header/>
 
-      {/*Container-fluid, container and row are standard convention for website layouts*/}
-      <div className="container-fluid" id="hero">
-        <div className="container">
-          <div className="jumbotron-card">
-            <h2 id="jumbo-title">Search Car</h2>
-            <div className="pickup-search">
-              <PickupSearch/>
-            </div>
-            <div className="dropoff-search">
-              <DropoffSearch/>
-            </div>
-            <div className="pickup-date">
-              <DatePickup/>
-            </div>
-            <div className="dropoff-date">
-              <DateDropoff/>
-            </div>
-            <div className="pickup-time">
-              <TimePickup/>
-            </div>
-            <div className="dropoff-time">
-              <TimeDropoff/>
-            </div>
-            <div className="search-button">
+      {/*Box Container is MUI standard convention for styling*/}
+      <Box>
+        <Container>
+          <Card style={{marginTop: '2em', marginBottom: '2em', padding: '2em'}}>
+            <Box sx={{fontSize: 'h5.fontSize', fontWeight: 'bold'}} mb={1}>
+              Search Car
+            </Box>
+            <Grid container spacing={2} mb={4}>
+              <Grid item xs={6}>
+                <PickupSearch/>
+              </Grid>
+              <Grid item xs={6}>
+               <DropoffSearch/>
+              </Grid>
+            </Grid>
+            <Grid container spacing={2} mb={4}>
+              <Grid item xs={3}>
+                <DatePickup/>
+              </Grid>
+              <Grid item xs={3}>
+                <DateDropoff/>
+              </Grid>
+              <Grid item xs={3}>
+                <TimePickup/>
+              </Grid>
+              <Grid item xs={3}>
+                <TimeDropoff/>
+              </Grid>
+            </Grid>
+            <Box display='flex' justifyContent={'center'}>
               <ThemeProvider theme={theme}>
-              <Button variant="contained">Search</Button>
+                <Button variant="contained">Search</Button>
               </ThemeProvider>
-            </div>
-          </div>
-        </div>
-      </div>
+            </Box>
+            
+          </Card>
+        </Container>
+      </Box>
 
       {/*Popular Car Type Carousel*/}
-      <div className="container-fluid">
-        <div className="container">
-          <h2>Popular Car Types</h2>
+      <Box>
+        <Container>
+          <Box sx={{fontSize: 'h5.fontSize', color: '#fff'}}>
+            Popular Car Type
+          </Box>
           <Box
             sx={{
               display: 'grid', 
               gridTemplateColumns: 'repeat(6, 1fr)',
-              bgcolor: 'background.paper',
+              bgcolor: 'inherit',
               borderRadius: 1,
             }}>
             {cardInfo.map(renderCard)}
           </Box>
-        </div>
-      </div>
+        </Container>
+      </Box>
+          
       
       {/*Footer Section*/}
       <Footer/>
-    </div>
+    </Box>
   );
 };
 

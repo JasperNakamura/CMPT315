@@ -29,7 +29,7 @@ const theme = createTheme({
 })
 
 /*MUI AppBar modified tempalte*/
-const pages = ['addcars', 'rentcar', 'updateclients'];
+const pages = ['rentals', 'returns', 'cars'];
 const settings = ['Profile', 'Account', 'Logout'];
 
 const HomeAppBar = () => {
@@ -61,7 +61,7 @@ const HomeAppBar = () => {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="/"
+                        href="/admin"
                         sx={{
                         mr: 2,
                         display: { xs: 'none', md: 'flex' },
@@ -72,7 +72,7 @@ const HomeAppBar = () => {
                         textDecoration: 'none',
                         }}
                     >
-                        CarGrab
+                        CarGrab Admin Site
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

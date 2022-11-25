@@ -1,4 +1,4 @@
-import { Button, CardActionArea, CardActions, Grid } from '@mui/material';
+import { Button, CardActionArea, CardActions, Container, Divider, Grid } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,8 +9,29 @@ import React, { useEffect, useState } from "react";
 import CarFilter from "../components/CarFilter";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import PickupSearch from "../components/LocationPSearch";
+import DropoffSearch from "../components/LocationDSearch";
+import DatePickup from "../components/DateDSelector";
+import DateDropoff from "../components/DatePSelector";
+import TimePickup from "../components/TimePSelector";
+import TimeDropoff from "../components/TimeDSelector";
+import { Link as RouterLink } from 'react-router-dom';
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@emotion/react';
 import "./css/Car.css"
 import "./css/Normalize.css";
+
+// Changes color to a reddish color
+const theme = createTheme({
+  palette: {
+      primary: {    
+          light: '#ff7961',
+          main: '#f44336',
+          dark: '#ba000d',
+          contrastText: '#fff',
+      }
+  }
+})
 
 const Cars = () => {
   const cardInfo = []
@@ -32,9 +53,8 @@ const Cars = () => {
 
   const renderCard = (card, index) => {
     return (
-      <Grid item sx={{justifyContent: 'center'}} xs={12} sm={6} md={4} xl={3} key={index}>
-        <Card sx={{ maxWidth: 345 }}>
-          <CardActionArea>
+        <Card sx={{ width: '100%', marginBottom: '2em', marginLeft: '2em'}}>
+          <CardActionArea component={RouterLink} to="/details">
             <CardMedia
               component="img"
               height="180px"
@@ -52,7 +72,6 @@ const Cars = () => {
             </CardContent>
           </CardActionArea>
         </Card>
-      </Grid>
       
     )
   } 
@@ -66,17 +85,55 @@ const Cars = () => {
   return (
     <div>
       <Header/>
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-         <CarFilter/>
-        </Grid>
-        <Grid item xs={9} mt={{xs: 2, sm: 5}} pb={{xs: 5, sm: 1}}>
-          <Grid container spacing={3} sx={{alignItems:'space-around'}}>
-            {cardInfo.map(renderCard)}
-          </Grid>    
-        </Grid>
-      </Grid>
-       
+
+      {/* Search Section */}
+      <Box>
+        <Container style={{marginTop: '2em', marginBottom: '3em'}}>
+          <Grid container spacing={2} mb={4}>
+            <Grid item xs={3}>
+              <PickupSearch/>
+            </Grid>
+            <Grid item xs={2}>
+              <DatePickup/>
+            </Grid>
+            <Grid item xs={2}>
+              <DateDropoff/>
+            </Grid>
+            <Grid item xs={2}>
+              <TimePickup/>
+            </Grid>
+            <Grid item xs={2}>
+              <TimeDropoff/>
+            </Grid>
+            <Grid item xs={1}>
+              <ThemeProvider theme={theme}>
+                <Button variant="contained">Search</Button>
+              </ThemeProvider>
+            </Grid>
+          </Grid>
+          <DropoffSearch/>
+        </Container>
+      </Box>
+      
+      {/* Display of Cars */}
+      <Box style={{background: '#21033a'}}>
+        <Container>
+          <Grid container spacing={2}>
+            {/* Filter section */}
+            <Grid item xs={3}>
+              <CarFilter/>
+            </Grid>
+
+            {/* Car Load section */}
+            <Grid item xs={9} mt={{xs: 2, sm: 5}} pb={{xs: 5, sm: 1}}>
+              <Grid container spacing={3} sx={{alignItems:'space-around'}}>
+                {cardInfo.map(renderCard)}
+              </Grid>    
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
       <Footer/>
     </div>
   );
