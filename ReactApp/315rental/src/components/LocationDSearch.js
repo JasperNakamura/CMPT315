@@ -2,7 +2,6 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/system/Box';
-import SearchIcon from '@mui/icons-material/Search';
 
 /*
 PURPOSE: Search field for finding pickup locations
@@ -50,15 +49,15 @@ const Search = styled('div')(({ theme }) => ({
     },
   }));
 
-export default function PickupSearch() {
+export default function DropoffSearch() {
     return (
         <Box sx={{border: '1px solid gray', borderRadius: 1}}>
              <Search>
                 <SearchIconWrapper>
-                    <SearchIcon />
+                  <LocationOnIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
-                    placeholder="Pickup Location"
+                    placeholder="Dropoff Location"
                     inputProps={{ 'aria-label': 'search' }}
                 />
             </Search>

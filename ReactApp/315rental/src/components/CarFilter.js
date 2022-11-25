@@ -102,7 +102,7 @@ export default function CarFilter() {
 
     return (
         <List
-            sx={{ width: '100%', maxWidth: 270, bgcolor: '#fff' }}
+            sx={{ width: '100%', maxWidth: 270, bgcolor: '#fff'}}
             component="nav"
             aria-labelledby="nested-list-subheader"
             subheader={
