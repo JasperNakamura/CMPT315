@@ -37,7 +37,7 @@ const Cars = () => {
   const [carData, setCarData] = useState('');
 
   const [pickUpLocation, setPickUpLocation] = React.useState(location.state === null ? null : location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === '' ? location.state.PickUpLocation : location.state.DropOffLocation);
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
   const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
   const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
 
@@ -67,8 +67,8 @@ const Cars = () => {
           PickUpLocation: pickUpLocation,
           DropOffLocation: dropOffLocation === '' ? pickUpLocation : dropOffLocation,
           PickUpDate: pickUpDate,
-          DropOffDate: dropOffDate
-          
+          DropOffDate: dropOffDate,
+          CarDetails: cars[index]
         }}>
           <CardMedia
             component="img"
@@ -123,14 +123,20 @@ const Cars = () => {
               <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
             </Grid>
             <Grid item xs={3}>
-              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
             </Grid>
             <Grid item xs={3}>
-              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
             </Grid>
             <Grid item xs={1}>
               <ThemeProvider theme={theme}>
-                <Button variant="contained">Search</Button>
+                <Button variant="contained" component={RouterLink} to={"/cars"} state={{
+                    /*passing data here*/
+                    PickUpLocation: pickUpLocation,
+                    DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+                    PickUpDate: pickUpDate,
+                    DropOffDate: dropOffDate
+                  }}>Search</Button>
               </ThemeProvider>
             </Grid>
           </Grid>
