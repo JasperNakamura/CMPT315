@@ -20,7 +20,7 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import "./css/Car.css"
 import "./css/Normalize.css";
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -35,19 +35,14 @@ const theme = createTheme({
 })
 
 const Cars = () => {
-  
+
   const location = useLocation();
   const [carData, setCarData] = useState('');
-  console.log(location.state)
 
-  const [pickUpLocation, setPickUpLocation] = React.useState(location.state===null? null: location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state===null? null: location.state.DropOffLocation ===null? location.state.PickUpLocation: location.state.DropOffLocation);
-  const [pickUpDate, setPickUpDate] = React.useState(location.state===null? null: location.state.PickUpDate);
-  const [dropOffDate, setDropOffDate] = React.useState(location.state===null? null: location.state.DropOffDate);
-
-  console.log("hell:", dropOffDate, pickUpDate)
-
-
+  const [pickUpLocation, setPickUpLocation] = React.useState(location.state === null ? null : location.state.PickUpLocation);
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
+  const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
+  const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
 
   const cardInfo = []
 
@@ -69,7 +64,14 @@ const Cars = () => {
   const renderCard = (card, index) => {
     return (
       <Card sx={{ width: '100%', marginBottom: '2em', marginLeft: '2em' }}>
-        <CardActionArea component={RouterLink} to="/details">
+        <CardActionArea component={RouterLink} to={"/details"} state={{
+          /*passing data here*/
+          PickUpLocation: pickUpLocation,
+          DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+          PickUpDate: pickUpDate,
+          DropOffDate: dropOffDate
+          
+        }}>
           <CardMedia
             component="img"
             height="180px"
@@ -98,16 +100,16 @@ const Cars = () => {
   }
   const handlePickUpLocation = (event) => {
     setPickUpLocation(event)
-  } 
+  }
   const handleDropOffLocation = (event) => {
     setDropOffLocation(event)
-  } 
+  }
 
   const handlePickUpDate = (event) => {
     setPickUpDate(event)
   }
 
-  const handleDropOffDate= (event) => {
+  const handleDropOffDate = (event) => {
     setDropOffDate(event)
   }
 
@@ -120,13 +122,13 @@ const Cars = () => {
         <Container style={{ marginTop: '2em', marginBottom: '3em' }}>
           <Grid container spacing={2} mb={4}>
             <Grid item xs={3}>
-              <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation}/>
+              <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
             </Grid>
             <Grid item xs={2}>
-              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate}/>
+              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
             </Grid>
             <Grid item xs={2}>
-              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate}/>
+              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
             </Grid>
             <Grid item xs={2}>
               <TimePickup />
@@ -140,7 +142,7 @@ const Cars = () => {
               </ThemeProvider>
             </Grid>
           </Grid>
-          <DropoffSearch onChange = {value => handleDropOffLocation(value)} value={dropOffLocation}/>
+          <DropoffSearch onChange={value => handleDropOffLocation(value)} value={dropOffLocation} />
         </Container>
       </Box>
 
