@@ -11,6 +11,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Container } from "@mui/system";
 import Link from '@mui/material/Link';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -41,6 +42,12 @@ export default function Details () {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const location = useLocation();
+  /*data passed from cars*/
+  console.log(location)
+
+
 
   return (
     <Box bgcolor='#21033a'>

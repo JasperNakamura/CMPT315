@@ -6,12 +6,14 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
-export default function MaterialUIPickers() {
-  const [value, setValue] = React.useState(moment('2014-08-18T21:11:54'));
+export default function MaterialUIPickers(props) {
+  const [value, setValue] = React.useState(props.value === ''? '': props.value);
 
   const handleChange = (newValue) => {
     setValue(newValue);
+    props.onChange(newValue.toString());
   };
+
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
