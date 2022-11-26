@@ -1,4 +1,4 @@
-import { Button, CardActionArea, CardActions, Container, Divider, Grid } from '@mui/material';
+import { Button, CardActionArea, CardActions, Container, CssBaseline, Divider, Grid } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -18,8 +18,6 @@ import TimeDropoff from "../components/TimeDSelector";
 import { Link as RouterLink } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import "./css/Car.css"
-import "./css/Normalize.css";
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -53,7 +51,7 @@ const Cars = () => {
 
   const renderCard = (card, index) => {
     return (
-        <Card sx={{ width: '100%', marginBottom: '2em', marginLeft: '2em'}}>
+        <Card sx={{width: '100%', marginBottom: '2em', marginLeft: '2em'}}>
           <CardActionArea component={RouterLink} to="/details">
             <CardMedia
               component="img"
@@ -84,6 +82,7 @@ const Cars = () => {
 
   return (
     <div>
+      <CssBaseline/>
       <Header/>
 
       {/* Search Section */}
@@ -116,7 +115,7 @@ const Cars = () => {
       </Box>
       
       {/* Display of Cars */}
-      <Box style={{background: '#21033a'}}>
+      <Box sx={{background: '#21033a'}}>
         <Container>
           <Grid container spacing={2}>
             {/* Filter section */}
