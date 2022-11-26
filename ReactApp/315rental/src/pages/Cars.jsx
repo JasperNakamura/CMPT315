@@ -40,9 +40,10 @@ const Cars = () => {
   const [carData, setCarData] = useState('');
 
   const [pickUpLocation, setPickUpLocation] = React.useState(location.state === null ? null : location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === '' ? location.state.PickUpLocation : location.state.DropOffLocation);
   const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
   const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
+
 
   const cardInfo = []
 
@@ -67,7 +68,7 @@ const Cars = () => {
         <CardActionArea component={RouterLink} to={"/details"} state={{
           /*passing data here*/
           PickUpLocation: pickUpLocation,
-          DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+          DropOffLocation: dropOffLocation === '' ? pickUpLocation : dropOffLocation,
           PickUpDate: pickUpDate,
           DropOffDate: dropOffDate
           

@@ -49,7 +49,12 @@ const Search = styled('div')(({ theme }) => ({
     },
   }));
 
-export default function DropoffSearch() {
+export default function DropoffSearch(props) {
+    const [value, setValue] = React.useState(props.value === null? null: props.value);
+    const handleChange = (event) => {
+      setValue(event.target.value);
+      props.onChange(event.target.value);
+    };
     return (
         <Box sx={{border: '1px solid gray', borderRadius: 1}}>
              <Search>
@@ -59,6 +64,8 @@ export default function DropoffSearch() {
                 <StyledInputBase
                     placeholder="Dropoff Location"
                     inputProps={{ 'aria-label': 'search' }}
+                    onChange={handleChange}   
+                    value={value}
                 />
             </Search>
         </Box>  

@@ -44,7 +44,9 @@ export default function Details () {
   const handleClose = () => setOpen(false);
 
   const location = useLocation();
+  /*data passed from cars*/
   console.log(location)
+
 
 
   return (

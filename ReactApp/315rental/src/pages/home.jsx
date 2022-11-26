@@ -13,8 +13,8 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import PickupSearch from "../components/LocationPSearch";
 import DropoffSearch from "../components/LocationDSearch";
-import DatePickup from "../components/DateDSelector";
-import DateDropoff from "../components/DatePSelector";
+import DateDropoff from "../components/DateDSelector";
+import DatePickup from "../components/DatePSelector";
 import TimePickup from "../components/TimePSelector";
 import TimeDropoff from "../components/TimeDSelector";
 import { Container } from "@mui/system";
@@ -40,6 +40,28 @@ const Home = () => {
       {image: "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fpngimg.com%2Fuploads%2Fpickup_truck%2Fpickup_truck_PNG16336.png&f=1&nofb=1&ipt=23208ef240cb81df18a8f20f7752f7daebc28e467d9fe61c282659da2160a92c&ipo=images", CarName: "Pickup"},
       {image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.valueautorental.com%2Fwp-content%2Fimages%2Feconomy-car.png&f=1&nofb=1&ipt=2db106fd358178a686e793578d7397817aa56cb8ba9a999fcdcbbe4d23d2f53a&ipo=images", CarName: "Economy"},
   ]
+
+  const [pickUpLocation, setPickUpLocation] = React.useState('');
+  const [dropOffLocation, setDropOffLocation] = React.useState('');
+  const [pickUpDate, setPickUpDate] = React.useState('');
+  const [dropOffDate, setDropOffDate] = React.useState('');
+
+  const handlePickUpLocation = (event) => {
+    setPickUpLocation(event)
+  }
+  const handleDropOffLocation = (event) => {
+    setDropOffLocation(event)
+  }
+
+  const handlePickUpDate = (event) => {
+    console.log(event)
+    setPickUpDate(event)
+  }
+
+  const handleDropOffDate = (event) => {
+    console.log(event)
+    setDropOffDate(event)
+  }
 
   const renderCard = (card, index) => {
       return (
@@ -78,29 +100,35 @@ const Home = () => {
             </Box>
             <Grid container spacing={2} mb={4}>
               <Grid item xs={6}>
-                <PickupSearch/>
+                <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
               </Grid>
               <Grid item xs={6}>
-               <DropoffSearch/>
+                <DropoffSearch onChange={value => handleDropOffLocation(value)} value={dropOffLocation} />
               </Grid>
             </Grid>
             <Grid container spacing={2} mb={4}>
               <Grid item xs={3}>
-                <DatePickup/>
+                <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
               </Grid>
               <Grid item xs={3}>
-                <DateDropoff/>
+                <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
               </Grid>
               <Grid item xs={3}>
-                <TimePickup/>
+                <TimePickup />
               </Grid>
               <Grid item xs={3}>
-                <TimeDropoff/>
+                <TimeDropoff />
               </Grid>
             </Grid>
             <Box display='flex' justifyContent={'center'}>
               <ThemeProvider theme={theme}>
-                <Button variant="contained">Search</Button>
+                <Button variant="contained" component={RouterLink} to={"/cars"} state={{
+                  /*passing data here*/
+                  PickUpLocation: pickUpLocation,
+                  DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+                  PickUpDate: pickUpDate,
+                  DropOffDate: dropOffDate
+                }}>Search</Button>
               </ThemeProvider>
             </Box>
             
