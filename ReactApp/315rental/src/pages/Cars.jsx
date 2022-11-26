@@ -19,7 +19,6 @@ import { Link as RouterLink, useRoutes } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import "./css/Car.css"
-import "./css/Normalize.css";
 import { useLocation, useNavigate } from 'react-router-dom';
 
 // Changes color to a reddish color
