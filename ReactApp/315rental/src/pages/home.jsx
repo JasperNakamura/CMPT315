@@ -10,13 +10,14 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Button, CardActionArea, CssBaseline, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import CheckIcon from '@mui/icons-material/Check';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import PaidIcon from '@mui/icons-material/Paid';
 
 import PickupSearch from "../components/LocationPSearch";
 import DropoffSearch from "../components/LocationDSearch";
 import DateDropoff from "../components/DateDSelector";
 import DatePickup from "../components/DatePSelector";
-import TimePickup from "../components/TimePSelector";
-import TimeDropoff from "../components/TimeDSelector";
 import { Container } from "@mui/system";
 
 // Changes color to a reddish color
@@ -91,69 +92,82 @@ const Home = () => {
       {/*Header section from component*/}
       <Header/>
 
-      {/*Box Container is MUI standard convention for styling*/}
-      <Box>
-        <Container>
-          <Card style={{marginTop: '2em', marginBottom: '2em', padding: '2em'}}>
-            <Box sx={{fontSize: 'h5.fontSize', fontWeight: 'bold'}} mb={1}>
-              Search Car
+      <Box sx={{minHeight: '70vh'}}>
+        {/*Box Container is MUI standard convention for styling*/}
+        <Box>
+          <Container>
+            <Card style={{marginTop: '2em', marginBottom: '2em', padding: '2em'}}>
+              <Box sx={{fontSize: 'h5.fontSize', fontWeight: 'bold'}} mb={1}>
+                Search Car
+              </Box>
+              <Grid container spacing={2} mb={4}>
+                <Grid item xs={4}>
+                  <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+                </Grid>
+                <Grid item xs={4}>
+                  <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} mb={4}>
+                <Grid item xs={6}>
+                  <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
+                </Grid>
+                <Grid item xs={6}>
+                  <DropoffSearch onChange={value => handleDropOffLocation(value)} value={dropOffLocation} />
+                </Grid>
+              </Grid>
+              
+              <Box display='flex' justifyContent={'center'}>
+                <ThemeProvider theme={theme}>
+                  <Button variant="contained" component={RouterLink} to={"/cars"} state={{
+                    /*passing data here*/
+                    PickUpLocation: pickUpLocation,
+                    DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+                    PickUpDate: pickUpDate,
+                    DropOffDate: dropOffDate
+                  }}>Search</Button>
+                </ThemeProvider>
+              </Box>
+            </Card>
+          </Container>
+        </Box>
+                
+        <Box sx={{backgroundColor: '#fff', height: '10vh', marginTop: '4em', marginBottom: '4em', display: 'flex', alignContent: 'center'}}>
+          <Container sx={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)'}}>
+            <Box sx={{display: 'flex', alignItems: 'center', margin: '0 auto'}}>
+              <CheckIcon sx={{fontSize: 40}}/>
+              <h2>A trusted Car Rental Brand</h2>
             </Box>
-            <Grid container spacing={2} mb={4}>
-              <Grid item xs={6}>
-                <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
-              </Grid>
-              <Grid item xs={6}>
-                <DropoffSearch onChange={value => handleDropOffLocation(value)} value={dropOffLocation} />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} mb={4}>
-              <Grid item xs={3}>
-                <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
-              </Grid>
-              <Grid item xs={3}>
-                <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
-              </Grid>
-              <Grid item xs={3}>
-                <TimePickup />
-              </Grid>
-              <Grid item xs={3}>
-                <TimeDropoff />
-              </Grid>
-            </Grid>
-            <Box display='flex' justifyContent={'center'}>
-              <ThemeProvider theme={theme}>
-                <Button variant="contained" component={RouterLink} to={"/cars"} state={{
-                  /*passing data here*/
-                  PickUpLocation: pickUpLocation,
-                  DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
-                  PickUpDate: pickUpDate,
-                  DropOffDate: dropOffDate
-                }}>Search</Button>
-              </ThemeProvider>
+            <Box sx={{display: 'flex', alignItems: 'center', margin: '0 auto'}}>
+              <LocalOfferIcon sx={{fontSize: 40}}/>
+              <h2>Book a car in 3 easy steps</h2>
             </Box>
-            
-          </Card>
-        </Container>
-      </Box>
-
-      {/*Popular Car Type Carousel*/}
-      <Box>
-        <Container>
-          <Box sx={{fontSize: 'h5.fontSize', color: '#fff'}}>
-            Popular Car Type
-          </Box>
-          <Box
-            sx={{
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(6, 1fr)',
-              bgcolor: 'inherit',
-              borderRadius: 1,
-            }}>
-            {cardInfo.map(renderCard)}
-          </Box>
-        </Container>
-      </Box>
+            <Box sx={{display: 'flex', alignItems: 'center', margin: '0 auto'}}>
+              <PaidIcon sx={{fontSize: 40}}/>
+              <h2>Find great deals</h2>
+            </Box>
+          </Container>
           
+        </Box>
+
+        {/*Popular Car Type Carousel*/}
+        <Box>
+          <Container>
+            <Box sx={{fontSize: 'h5.fontSize', color: '#fff'}}>
+              Popular Car Type
+            </Box>
+            <Box
+              sx={{
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(6, 1fr)',
+                bgcolor: 'inherit',
+                borderRadius: 1,
+              }}>
+              {cardInfo.map(renderCard)}
+            </Box>
+          </Container>
+        </Box>
+      </Box>
       
       {/*Footer Section*/}
       <Footer/>

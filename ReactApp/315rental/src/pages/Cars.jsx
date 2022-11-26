@@ -13,8 +13,6 @@ import PickupSearch from "../components/LocationPSearch";
 import DropoffSearch from "../components/LocationDSearch";
 import DateDropoff from "../components/DateDSelector";
 import DatePickup from "../components/DatePSelector";
-import TimePickup from "../components/TimePSelector";
-import TimeDropoff from "../components/TimeDSelector";
 import { Link as RouterLink, useRoutes } from 'react-router-dom';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
@@ -121,20 +119,14 @@ const Cars = () => {
       <Box>
         <Container style={{ marginTop: '2em', marginBottom: '3em' }}>
           <Grid container spacing={2} mb={4}>
-            <Grid item xs={3}>
+            <Grid item xs={5}>
               <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={3}>
               <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
-            </Grid>
-            <Grid item xs={2}>
-              <TimePickup />
-            </Grid>
-            <Grid item xs={2}>
-              <TimeDropoff />
             </Grid>
             <Grid item xs={1}>
               <ThemeProvider theme={theme}>
