@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button, FormControlLabel, Grid, Switch, TextField, Tabs, Tab, Typography } from "@mui/material";
-import { Container } from "@mui/system";
+import { Box, Button, FormControlLabel, Grid, Switch, TextField, Tabs, Tab, Typography, Card, CssBaseline } from "@mui/material";
+import { bgcolor, Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { useEffect } from "react";
 import axios from 'axios';
@@ -40,17 +40,23 @@ function a11yProps(index) {
 }
 
 export default function Cars () {
-  const [value, setValue] = React.useState(0);
-    
-  const [branch, setBranch] = React.useState([]);
-  const [carType, setCarType] = React.useState([]);
+  /* Selection Values */
+  const [value, setValue] = React.useState(0); //for tabs
+  const [branch, setBranch] = React.useState("");
+  const [carType, setCarType] = React.useState("");
+  const [car, setCar] = React.useState("");
+  
+  /* API Arrays */
+  const [branches, setBranches] = React.useState([]);
+  const [carTypes, setCarTypes] = React.useState([]);
+  const [cars, setCars] = React.useState([]);
 
   /* Branch API */
-  const getBranch = async () => {
+  const getBranches = async () => {
     try {
       const response = await axios.get(`http://127.0.0.1:8000/api/branches/?format=json`)
       if (response.length > 0 || response.data !== undefined) {
-        setBranch(response.data);
+        setBranches(response.data);
       }
     } catch (error) {
         console.log(error);
@@ -58,24 +64,37 @@ export default function Cars () {
   }
 
   /* CarType API */
-  const getCarType = async () => {
+  const getCarTypes = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/carTypes/?format=json`)
         if (response.length > 0 || response.data !== undefined) {
-          setCarType(response.data);
+          setCarTypes(response.data);
         }
       } catch (error) {
           console.log(error);
       }  
   }
 
+  /* Car API */
+   const getCars = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/cars/?format=json`)
+        if (response.length > 0 || response.data !== undefined) {
+          setCars(response.data);
+        }
+      } catch (error) {
+          console.log(error);
+    }  
+  }
+
   useEffect(() => {
-      getBranch();
-      getCarType();
+      getBranches();
+      getCarTypes();
+      getCars();
   }, []);
 
   /* Input field values */
-  const [manufacturer, setMenufacturer] = React.useState("");
+  const [manufacturer, setManufacturer] = React.useState("");
   const [model, setModel] = React.useState("");
   const [fuelType, setFuelType] = React.useState("");
   const [colour, setColour] = React.useState("");
@@ -84,407 +103,541 @@ export default function Cars () {
   const [mileage, setMileage] = React.useState("");
 
   /* Axios post location */
-  const handleSubmit = async (event) =>{
+  const handleAdd = async (event) => {
       event.preventDefault();
   
       await axios.post('http://127.0.0.1:8000/api/cars/', {
-          Manufacturer: manufacturer, 
-          Model: model,
-          FuelType: fuelType,
-          Colour: colour,
-          LicensePlate: licensePlate,
-          Status: available,
-          Mileage: mileage,
-          Branch: branch[bIndex].BranchID,
-          Type: carType[cIndex].TypeID,
+        Manufacturer: manufacturer, 
+        Model: model,
+        FuelType: fuelType,
+        Colour: colour,
+        LicensePlate: licensePlate,
+        Status: available,
+        Mileage: parseInt(mileage),
+        Branch: parseInt(branch),
+        Type: parseInt(carType),
       })
       .then(res => console.log(res)) 
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
+  }
+
+  const handleUpdate = async (event) => {
+    event.preventDefault();
+
+    await axios.put(`http://127.0.0.1:8000/api/cars/${car}/`, {
+      Manufacturer: manufacturer, 
+      Model: model,
+      FuelType: fuelType,
+      Colour: colour,
+      LicensePlate: licensePlate,
+      Status: available,
+      Mileage: parseInt(mileage),
+      Branch: parseInt(branch),
+      Type: parseInt(carType),
+    })
+    .then(res => {
+      console.log(res)
+      getCars();
+    }) 
+    .catch(err => console.log(err));
+  }
+
+  const handleDelete = async (event) => {
+    event.preventDefault();
+
+    await axios.delete(`http://127.0.0.1:8000/api/cars/${car}/`)
+    .then(res => { 
+      console.log(res)
+      getCars();
+      setManufacturer("");
+      setModel("");
+      setFuelType("");
+      setColour("");
+      setLicensePlate("");
+      setAvailable(false);
+      setMileage("");
+      setBranch("");
+      setCarType("");
+    }) 
+    .catch(err => console.log(err));
   }
 
   const handleChange = (event) => {
-      if(event.target.id === "manufacturer_input_id"){
-          setMenufacturer(event.target.value);
-      }
-      if(event.target.id === "model_input_id"){
-          setModel(event.target.value);          
-      }
-      if(event.target.id === "fueltype_input_id"){
-          setFuelType(event.target.value);        
-      }
-      if(event.target.id === "colour_input_id"){
-          setColour(event.target.value);
-      }
-      if(event.target.id === "licenseplate_input_id"){
-          setLicensePlate(event.target.value);
-      }
-      if(event.target.id === "available_input_id"){
-          setAvailable(!event.target.checked);
-      }
-      if(event.target.id === "mileage_input_id") {
-          setMileage(event.target.value);
-      }
-      if(event.target.name === "branch_input_id"){
-          setbIndex(event.target.value);
-      }
-      if(event.target.name === "cartype_input_id"){
-          setcIndex(event.target.value);
-      }
+    if(event.target.id === "manufacturer_input_id"){
+      setManufacturer(event.target.value);
+    }
+    if(event.target.id === "model_input_id"){
+      setModel(event.target.value);          
+    }
+    if(event.target.id === "fueltype_input_id"){
+      setFuelType(event.target.value);        
+    }
+    if(event.target.id === "colour_input_id"){
+      setColour(event.target.value);
+    }
+    if(event.target.id === "licenseplate_input_id"){
+      setLicensePlate(event.target.value);
+    }
+    if(event.target.id === "available_input_id"){
+      setAvailable(event.target.checked);
+    }
+    if(event.target.id === "mileage_input_id") {
+      setMileage(event.target.value);
+    }
+    if(event.target.id === "branch_input_id"){
+      setBranch(event.target.value);
+    }
+    if(event.target.id === "cartype_input_id"){
+      setCarType(event.target.value);
+    }
   };
 
   const handleTabs = (event, newValue) => {
     setValue(newValue);
+    getCars();
+    
+    setManufacturer("");
+    setModel("");
+    setFuelType("");
+    setColour("");
+    setLicensePlate("");
+    setAvailable(false);
+    setMileage("");
+    setBranch("");
+    setCarType("");
   }
 
-  const [bIndex, setbIndex] = React.useState(0);
-  const [cIndex, setcIndex] = React.useState(0);
+  const selectCar = async (event) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/cars/${event.target.value}/?format=json`)
+      if (response.length > 0 || response.data !== undefined) {
+        let vehicle = response.data;
+        setCar(vehicle.CarID);
+        setManufacturer(vehicle.Manufacturer);
+        setModel(vehicle.Model);
+        setFuelType(vehicle.FuelType);
+        setColour(vehicle.Colour);
+        setLicensePlate(vehicle.LicensePlate);
+        setAvailable(vehicle.Status);
+        setMileage(vehicle.Mileage);
+        setBranch(vehicle.Branch);
+        setCarType(vehicle.Type);
+      }
+    } catch (error) {
+        console.log(error);
+    }
+  }
 
   return (
-    <div>
+    <Box sx={{height: '100vh', backgroundColor: '#21033a'}}>
+      <CssBaseline/>
       <Header/>
 
-      <h1>Manage Car Database</h1>
-      <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleTabs} aria-label="basic tabs example">
-          <Tab label="Add Car" {...a11yProps(0)} />
-          <Tab label="Update Car" {...a11yProps(1)} />
-          <Tab label="Delete Car" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      {/* Add Car */}
-      <TabPanel value={value} index={0}>
-        <Container>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
-            <div>
-              <TextField                          
+      <Container>
+        <h1 style={{color: 'white'}}>Manage Car Database</h1>
+        <Card sx={{ width: '100%' }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={value} onChange={handleTabs} aria-label="basic tabs example">
+              <Tab label="Add Car" {...a11yProps(0)} />
+              <Tab label="Update Car" {...a11yProps(1)} />
+              <Tab label="Delete Car" {...a11yProps(2)} />
+            </Tabs>
+          </Box>
+          {/* Add Car */}
+          <TabPanel value={value} index={0}>
+            <Container>
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+                <TextField                          
+                    sx={{m: 2}}
+                    required
+                    name="manufacturer_add"
+                    id="manufacturer_input_id"
+                    label="Manufacturer"                  
+                    value={manufacturer}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="model_add"
+                    id="model_input_id"
+                    label="Model"
+                    value={model}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="fueltype_add"
+                    id="fueltype_input_id"
+                    label="FuelType"
+                    value={fuelType}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="colour_add"
+                    id="colour_input_id"
+                    label="Colour"
+                    value={colour}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="licenseplate_add"
+                    id="licenseplate_input_id"
+                    label="LicensePlate"
+                    value={licensePlate}
+                    onChange={handleChange}
+                />
+                
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="mileage_add"
+                    id="mileage_input_id"
+                    label="Mileage"
+                    value={mileage}
+                    onChange={handleChange}
+                />
+              </Box>
+
+              <FormControlLabel 
+                control={<Switch id="available_input_id" checked={available}/>} 
+                name="availabile_add"
+                label="Available" 
+                labelPlacement='start' 
+                onChange={handleChange}
+              />
+
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '2em'}}>
+                <Box>
+                  <h2>Branch Location</h2>
+                  <select
+                  required
+                  name="branch_ad"
+                  id="branch_input_id"
+                  onChange={handleChange}
+                  >
+                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    {branches.map((location, index) => {
+                        return <option key={index} value={location.BranchID}>{location.City}</option>
+                    })}
+                  </select>
+                </Box>
+
+                <Box>
+                  <h2>Car Type</h2>
+                  <select
+                  required
+                  name="cartype_add"
+                  id="cartype_input_id"
+                  onChange={handleChange}
+                  >
+                      <option disabled selected value> ー Select Car Type* ー </option>
+                      {carTypes.map((type, index) => {
+                          return <option key={index} value={type.TypeID}>{type.Description}</option>
+                      })}
+                  </select>
+                </Box>
+
+                <Grid container spacing={0} justifyContent="center">
+                    <Grid item xs={3}>
+                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} 
+                          variant="contained"
+                          name="button_add" 
+                          onClick={handleAdd}>
+                            Add Car
+                        </Button>
+                    </Grid>   
+                </Grid> 
+              </Box>
+            </Container>
+          </TabPanel>
+
+          {/* Update Car */}
+          <TabPanel value={value} index={1}>
+            <Container>
+              <Grid container spacing={0} mt={3} mb={3} justifyContent="center">
+                <Grid item xs={3}>
+                  <select
+                  required
+                  name="car_update"
+                  id="update_car_select_id"
+                  onChange={selectCar}>
+                    <option disabled selected value> ー Select Vehicle* ー </option>
+                    {cars.map((vehicle, index) => {
+                      return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicensePlate})</option>
+                    })}
+                  </select>    
+                </Grid>   
+              </Grid> 
+
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+                <TextField                          
+                    sx={{m: 2}}
+                    required
+                    name="manufacturer_update"
+                    id="manufacturer_input_id"
+                    label="Manufacturer"                  
+                    value={manufacturer}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="model_update"
+                    id="model_input_id"
+                    label="Model"
+                    value={model}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="fueltype_update"
+                    id="fueltype_input_id"
+                    label="FuelType"
+                    value={fuelType}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="colour_update"
+                    id="colour_input_id"
+                    label="Colour"
+                    value={colour}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="licenseplate_update"
+                    id="licenseplate_input_id"
+                    label="LicensePlate"
+                    value={licensePlate}
+                    onChange={handleChange}
+                />
+                
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    name="mileage_update"
+                    id="mileage_input_id"
+                    label="Mileage"
+                    value={mileage}
+                    onChange={handleChange}
+                />
+              </Box>
+                
+              <FormControlLabel 
+                control={<Switch id="available_input_id" checked={available}/>} 
+                name="available_update"
+                label="Available" 
+                labelPlacement='start' 
+                onChange={handleChange}
+              />
+                
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '2em'}}>
+                <Box>
+                  <h2>Branch Location</h2>
+                  <select
+                      required
+                      name="branch_update"
+                      id="branch_input_id"
+                      onChange={handleChange}
+                      value={branch}
+                  >
+                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    {branches.map((location, index) => {
+                        return <option key={index} value={location.BranchID}>{location.City}</option>
+                    })}
+                  </select>
+                </Box>
+
+                <Box>
+                  <h2>Car Type</h2>
+                  <select
+                      required
+                      name="cartype_update"
+                      id="cartype_input_id"
+                      onChange={handleChange}
+                      value={carType}
+                  >
+                      <option disabled selected value> ー Select Car Type* ー </option>
+                      {carTypes.map((type, index) => {
+                          return <option key={index} value={type.TypeID}>{type.Description}</option>
+                      })}
+                  </select>
+                </Box>
+              
+                <Grid container spacing={0} justifyContent="center">
+                    <Grid item xs={3}>
+                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} 
+                          variant="contained"
+                          name="button_modify" 
+                          onClick={handleUpdate}>
+                            Update
+                        </Button>
+                    </Grid>   
+                </Grid> 
+              </Box>
+            </Container>
+          </TabPanel>
+
+          {/* Delete Car */}
+          <TabPanel value={value} index={2}>
+            <Container>
+              <Grid container spacing={0}  mt={3} mb={3} justifyContent="center">
+                <Grid item xs={3}>
+                  <select
+                    required
+                    name="car_delete"
+                    id="delete_car_select_id"
+                    onChange={selectCar}>
+                      <option disabled selected value> ー Select Vehicle* ー </option>
+                      {cars.map((vehicle, index) => {
+                        return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicensePlate})</option>
+                      })}
+                  </select>   
+                </Grid>   
+              </Grid> 
+
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+                <TextField                          
                   sx={{m: 2}}
                   required
+                  disabled
+                  name="manufacturer_delete"
                   id="manufacturer_input_id"
                   label="Manufacturer"                  
                   value={manufacturer}
                   onChange={handleChange}
-              />
+                />
 
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="model_input_id"
-                  label="Model"
-                  value={model}
-                  onChange={handleChange}
-              />
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    disabled
+                    name="model_delete"
+                    id="model_input_id"
+                    label="Model"
+                    value={model}
+                    onChange={handleChange}
+                />
 
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="fueltype_input_id"
-                  label="FuelType"
-                  value={fuelType}
-                  onChange={handleChange}
-              />
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    disabled
+                    name="fueltype_delete"
+                    id="fueltype_input_id"
+                    label="FuelType"
+                    value={fuelType}
+                    onChange={handleChange}
+                />
 
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="colour_input_id"
-                  label="Colour"
-                  value={colour}
-                  onChange={handleChange}
-              />
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    disabled
+                    name="colour_delete"
+                    id="colour_input_id"
+                    label="Colour"
+                    value={colour}
+                    onChange={handleChange}
+                />
 
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="licenseplate_input_id"
-                  label="LicensePlate"
-                  value={licensePlate}
-                  onChange={handleChange}
-              />
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    disabled
+                    name="licenseplate_delete"
+                    id="licenseplate_input_id"
+                    label="LicensePlate"
+                    value={licensePlate}
+                    onChange={handleChange}
+                />
+                
+                <TextField
+                    sx={{m: 2}}
+                    required
+                    disabled
+                    name="mileage_delete"
+                    id="mileage_input_id"
+                    label="Mileage"
+                    value={mileage}
+                    onChange={handleChange}
+                />
+              </Box>
 
-              <div>
-                  <FormControlLabel control={<Switch id="available_input_id"/>} label="Available" labelPlacement='start' onChange={handleChange} defaultChecked={false} value={available}/>
-              </div>
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="mileage_input_id"
-                  label="Mileage"
-                  value={mileage}
-                  onChange={handleChange}
-              />
-
-              <br/>
-
-              <h2>Branch Location</h2>
-              <select
-                  required
-                  name="branch"
-                  id="branch-simple-select"
-                  onChange={handleChange}
-              >
-                  <option disabled selected value> ー Select Branch Location* ー </option>
-                  {branch.map((location, index) => {
-                      return <option key={index} value={location.BranchID}>{location.City}</option>
-                  })}
-              </select>
-
-              <h2>Car Type</h2>
-              <select
-                  required
-                  name="cartype"
-                  id="cartype-simple-select"
-                  onChange={handleChange}
-              >
-                  <option disabled selected value> ー Select Car Type* ー </option>
-                  {carType.map((description, index) => {
-                      return <option key={index} value={description.TypeID}>{description.Description}</option>
-                  })}
-              </select>
-            </div>
-
-            <Grid container spacing={0} justifyContent="center">
-                <Grid item xs={3}>
-                    <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Add Car</Button>
-                </Grid>   
-            </Grid> 
-          </Box>
-        </Container>
-      </TabPanel>
-      {/* Update Car */}
-      <TabPanel value={value} index={1}>
-        <Container>
-          {/* FILL WITH CARS (USE UPDATE CLIENTS FOR REFERENCE) */}
-          <Grid container spacing={0} justifyContent="center">
-            <Grid item xs={3}>
-              <select>
-                <option value="" disabled={true}>
-                    --Choose Car--
-                </option>
-              </select>    
-            </Grid>   
-          </Grid> 
-
-          {/* CHANGE ON CHANGE AND HOW IT HANDLES THE UPDATE */}
-          <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
-            <div>
-              <TextField                          
-                  sx={{m: 2}}
-                  required
-                  id="manufacturer_input_id"
-                  label="Manufacturer"                  
-                  value={manufacturer}
-                  onChange={handleChange}
-              />
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="model_input_id"
-                  label="Model"
-                  value={model}
-                  onChange={handleChange}
-              />
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="fueltype_input_id"
-                  label="FuelType"
-                  value={fuelType}
-                  onChange={handleChange}
-              />
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="colour_input_id"
-                  label="Colour"
-                  value={colour}
-                  onChange={handleChange}
-              />
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="licenseplate_input_id"
-                  label="LicensePlate"
-                  value={licensePlate}
-                  onChange={handleChange}
-              />
-
-              <div>
-                  <FormControlLabel control={<Switch id="available_input_id"/>} label="Available" labelPlacement='start' onChange={handleChange} defaultChecked={false} value={available} />
-              </div>
-
-              <TextField
-                  sx={{m: 2}}
-                  required
-                  id="mileage_input_id"
-                  label="Mileage"
-                  value={mileage}
-                  onChange={handleChange}
-              />
-
-              <br/>
-
-              <h2>Branch Location</h2>
-              <select
-                  required
-                  name="branch"
-                  id="branch-simple-select"
-                  onChange={handleChange}
-              >
-                  <option disabled selected value> ー Select Branch Location* ー </option>
-                  {branch.map((location, index) => {
-                      return <option key={index} value={location.BranchID}>{location.City}</option>
-                  })}
-              </select>
-
-              <h2>Car Type</h2>
-              <select
-                  required
-                  name="cartype"
-                  id="cartype-simple-select"
-                  onChange={handleChange}
-              >
-                  <option disabled selected value> ー Select Car Type* ー </option>
-                  {carType.map((description, index) => {
-                      return <option key={index} value={description.TypeID}>{description.Description}</option>
-                  })}
-              </select>
-            </div>
-
-            <Grid container spacing={0} justifyContent="center">
-                <Grid item xs={3}>
-                    <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Update</Button>
-                </Grid>   
-            </Grid> 
-          </Box>
-        </Container>
-      </TabPanel>
-      {/* Delete Car */}
-      <TabPanel value={value} index={2}>
-        {/* FILL WITH CARS (USE UPDATE CLIENTS FOR REFERENCE) */}
-        <Container>
-          <Grid container spacing={0} justifyContent="center">
-            <Grid item xs={3}>
-              <select>
-                <option value="" disabled={true}>
-                    --Choose Car to delete--
-                </option>
-              </select>    
-            </Grid>   
-          </Grid> 
-
-        {/* MAKE THESE ALL READ ONLYS */}
-        <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
-          <div>
-            <TextField                          
-                sx={{m: 2}}
-                required
-                disabled
-                id="manufacturer_input_id"
-                label="Manufacturer"                  
-                value={manufacturer}
+              <FormControlLabel 
+                control={<Switch id="available_input_id" checked={available}/>} 
+                name="available_delete"
+                label="Available" 
+                labelPlacement='start' 
                 onChange={handleChange}
-            />
-
-            <TextField
-                sx={{m: 2}}
-                required
                 disabled
-                id="model_input_id"
-                label="Model"
-                value={model}
-                onChange={handleChange}
-            />
+              />
 
-            <TextField
-                sx={{m: 2}}
-                required
-                disabled
-                id="fueltype_input_id"
-                label="FuelType"
-                value={fuelType}
-                onChange={handleChange}
-            />
-
-            <TextField
-                sx={{m: 2}}
-                required
-                disabled
-                id="colour_input_id"
-                label="Colour"
-                value={colour}
-                onChange={handleChange}
-            />
-
-            <TextField
-                sx={{m: 2}}
-                required
-                disabled
-                id="licenseplate_input_id"
-                label="LicensePlate"
-                value={licensePlate}
-                onChange={handleChange}
-            />
-
-            <div>
-                <FormControlLabel control={<Switch id="available_input_id"/>} label="Available" labelPlacement='start' onChange={handleChange} defaultChecked={false} value={available} disabled/>
-            </div>
-
-            <TextField
-                sx={{m: 2}}
-                required
-                disabled
-                id="mileage_input_id"
-                label="Mileage"
-                value={mileage}
-                onChange={handleChange}
-            />
-
-            <br/>
-
-            <h2>Branch Location</h2>
-            <select
-                required
-                disabled
-                name="branch"
-                id="branch-simple-select"
-                onChange={handleChange}
-            >
-                <option disabled selected value> ー Select Branch Location* ー </option>
-                {branch.map((location, index) => {
-                    return <option key={index} value={location.BranchID}>{location.City}</option>
-                })}
-            </select>
-
-            <h2>Car Type</h2>
-            <select
-                required
-                disabled
-                name="cartype"
-                id="cartype-simple-select"
-                onChange={handleChange}
-            >
-                <option disabled selected value> ー Select Car Type* ー </option>
-                {carType.map((description, index) => {
-                    return <option key={index} value={description.TypeID}>{description.Description}</option>
-                })}
-            </select>
-          </div>
-
-          <Grid container spacing={0} justifyContent="center">
-              <Grid item xs={3}>
-                  <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Delete</Button>
-              </Grid>   
-          </Grid> 
-        </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '2em'}}>
+                <Box>
+                  <h2>Branch Location</h2>
+                  <select
+                      required
+                      disabled
+                      name="branch_delete"
+                      id="branch_select_id"
+                      value={branch}
+                  >
+                      <option disabled selected value> ー Select Branch Location* ー </option>
+                      {branches.map((location, index) => {
+                          return <option key={index} value={location.BranchID}>{location.City}</option>
+                      })}
+                  </select>
+                </Box>
+                <Box>
+                  <h2>Car Type</h2>
+                  <select
+                      required
+                      disabled
+                      name="cartype_delete"
+                      id="cartype_select_id"
+                      value={carType}
+                  >
+                      <option disabled selected value> ー Select Car Type* ー </option>
+                      {carTypes.map((description, index) => {
+                          return <option key={index} value={description.TypeID}>{description.Description}</option>
+                      })}
+                  </select>
+                </Box>
+              
+                <Grid container spacing={0} justifyContent="center">
+                    <Grid item xs={3}>
+                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} 
+                          variant="contained" 
+                          name="button_delete"
+                          onClick={handleDelete}>
+                            Delete
+                        </Button>
+                    </Grid>   
+                </Grid> 
+              </Box>
+            </Container>
+          </TabPanel>
+        </Card>
       </Container>
-      </TabPanel>
     </Box>
-    </div>
   );
 }

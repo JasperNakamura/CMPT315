@@ -35,7 +35,7 @@ const theme = createTheme({
 })
 
 const Cars = () => {
-
+  
   const location = useLocation();
   const [carData, setCarData] = useState('');
 
@@ -100,10 +100,10 @@ const Cars = () => {
   }
   const handlePickUpLocation = (event) => {
     setPickUpLocation(event)
-  }
+  } 
   const handleDropOffLocation = (event) => {
     setDropOffLocation(event)
-  }
+  } 
 
   const handlePickUpDate = (event) => {
     setPickUpDate(event)

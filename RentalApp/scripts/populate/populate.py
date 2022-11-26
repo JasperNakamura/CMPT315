@@ -29,7 +29,7 @@ def run():
                 Model=r[2],
                 FuelType=r[3],
                 Colour=r[4],
-                LicencePlate=r[5],
+                LicensePlate=r[5],
                 Status=r[6],
                 Mileage=r[7],
                 Branch=branch,       #
