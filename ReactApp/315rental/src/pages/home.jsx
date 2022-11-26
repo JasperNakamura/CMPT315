@@ -42,10 +42,10 @@ const Home = () => {
       {image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.valueautorental.com%2Fwp-content%2Fimages%2Feconomy-car.png&f=1&nofb=1&ipt=2db106fd358178a686e793578d7397817aa56cb8ba9a999fcdcbbe4d23d2f53a&ipo=images", CarName: "Economy"},
   ]
 
-  const [pickUpLocation, setPickUpLocation] = React.useState('');
-  const [dropOffLocation, setDropOffLocation] = React.useState('');
-  const [pickUpDate, setPickUpDate] = React.useState('');
-  const [dropOffDate, setDropOffDate] = React.useState('');
+  const [pickUpLocation, setPickUpLocation] = React.useState(null);
+  const [dropOffLocation, setDropOffLocation] = React.useState(null);
+  const [pickUpDate, setPickUpDate] = React.useState(null);
+  const [dropOffDate, setDropOffDate] = React.useState(null);
 
   const handlePickUpLocation = (event) => {
     setPickUpLocation(event)
@@ -102,11 +102,11 @@ const Home = () => {
               </Box>
               <Grid container spacing={2} mb={4}>
                 <Grid item xs={4}>
-                  <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
-                </Grid>
-                <Grid item xs={4}>
                   <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
                 </Grid>
+                <Grid item xs={4}>
+                  <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+                </Grid>               
               </Grid>
               <Grid container spacing={2} mb={4}>
                 <Grid item xs={6}>
