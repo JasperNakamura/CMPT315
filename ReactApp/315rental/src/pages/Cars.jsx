@@ -37,7 +37,7 @@ const Cars = () => {
   const [carData, setCarData] = useState('');
 
   const [pickUpLocation, setPickUpLocation] = React.useState(location.state === null ? null : location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation === '' ? location.state.PickUpLocation : location.state.DropOffLocation);
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : location.state.DropOffLocation.toString().length === 0? location.state.PickUpLocation : location.state.DropOffLocation);
   const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
   const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
 
@@ -65,10 +65,10 @@ const Cars = () => {
         <CardActionArea component={RouterLink} to={"/details"} state={{
           /*passing data here*/
           PickUpLocation: pickUpLocation,
-          DropOffLocation: dropOffLocation === '' ? pickUpLocation : dropOffLocation,
+          DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
           PickUpDate: pickUpDate,
-          DropOffDate: dropOffDate
-          
+          DropOffDate: dropOffDate,
+          CarDetails: cars[index]
         }}>
           <CardMedia
             component="img"
@@ -111,6 +111,22 @@ const Cars = () => {
     setDropOffDate(event)
   }
 
+  function handleVariableChanges (){
+    /* still not working, search on this page doesnt do anything*/
+    setPickUpLocation(pickUpLocation);
+    setDropOffLocation(dropOffLocation.toString().length === 0? pickUpLocation : dropOffLocation);
+    setPickUpDate(pickUpDate);
+    setDropOffDate(dropOffDate);
+    console.log(dropOffLocation);
+  }
+
+  const [filterValues, setFilterValues] = useState({});
+
+  const {render, returnValue}  = CarFilter()
+
+  /* return value is an obj of all the filter option - only update when filter/clear is clicked*/
+  console.log(returnValue);
+
   return (
     <div>
       <Header />
@@ -123,14 +139,14 @@ const Cars = () => {
               <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
             </Grid>
             <Grid item xs={3}>
-              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
             </Grid>
             <Grid item xs={3}>
-              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
             </Grid>
             <Grid item xs={1}>
               <ThemeProvider theme={theme}>
-                <Button variant="contained">Search</Button>
+                <Button variant="contained" onClick={handleVariableChanges}>Search</Button>
               </ThemeProvider>
             </Grid>
           </Grid>
@@ -144,7 +160,7 @@ const Cars = () => {
           <Grid container spacing={2}>
             {/* Filter section */}
             <Grid item xs={3}>
-              <CarFilter />
+              {render}
             </Grid>
 
             {/* Car Load section */}
