@@ -19,6 +19,7 @@ import DropoffSearch from "../components/LocationDSearch";
 import DateDropoff from "../components/DateDSelector";
 import DatePickup from "../components/DatePSelector";
 import { Container } from "@mui/system";
+import moment from 'moment'
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -55,13 +56,13 @@ const Home = () => {
   }
 
   const handlePickUpDate = (event) => {
-    console.log(event)
-    setPickUpDate(event)
+    console.log(moment(event).format("YYYY-MM-DD"))
+    setPickUpDate(moment(event).format("YYYY-MM-DD"))
   }
 
   const handleDropOffDate = (event) => {
-    console.log(event)
-    setDropOffDate(event)
+    console.log(moment(event).format("YYYY-MM-DD"))
+    setDropOffDate(moment(event).format("YYYY-MM-DD"))
   }
 
   const renderCard = (card, index) => {
@@ -102,7 +103,7 @@ const Home = () => {
               </Box>
               <Grid container spacing={2} mb={4}>
                 <Grid item xs={4}>
-                  <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+                  <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate}/>
                 </Grid>
                 <Grid item xs={4}>
                   <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />

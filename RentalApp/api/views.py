@@ -9,6 +9,10 @@ from django.db.models import Q
 # Create your views here.
 class AvailableCarFilterSet(filters.FilterSet):
     available = filters.CharFilter(method='get_available',)
+    Type = filters.CharFilter(method='typeFilter')
+    Colour = filters.CharFilter(method="colourFilter")
+    Manufacturer = filters.CharFilter(method='manufacturerFilter')
+    FuelType = filters.CharFilter(method="fuelTypeFilter")
 
     def get_available(self, queryset, field_name, value):
         dates = value.split(",")
@@ -17,7 +21,37 @@ class AvailableCarFilterSet(filters.FilterSet):
         if value:
             return queryset.filter(~Q(CarID__in=Rental.objects.values_list('Car', flat=True).filter(Q(Q(DateFrom__lte=dFrom) & Q(DateTo__gte=dFrom)) | Q(Q(DateFrom__lte=dTo) & Q(DateTo__gte=dTo)) | Q(Q(DateFrom__gte=dFrom) & Q(DateTo__lte=dTo)))))
         return queryset
+
+    def typeFilter(self, queryset, field_name, value):
+        if value:
+            values = value.split(",")
+            print(CarType.objects.values_list('TypeID', flat=True).filter(Description__in=values))
+            queryset = queryset.filter(Type__in=CarType.objects.values_list('TypeID', flat=True).filter(Description__in=values)).order_by('CarID')
+            return queryset
+        return queryset
+
+    def colourFilter(self, queryset, field_name, value):
+        if value:
+            values = value.split(",")
+            queryset = queryset.filter(Colour__in=values)
+            return queryset
+        return queryset
+
+    def manufacturerFilter(self, queryset, field_name, value):
+        if value:
+            values = value.split(",")
+            queryset = queryset.filter(Manufacturer__in=values)
+            return queryset
+        return queryset 
+
+    def fuelTypeFilter(self, queryset, field_name, value):
+        if value:
+            values = value.split(",")
+            queryset = queryset.filter(FuelType__in=values)
+            return queryset
+        return queryset 
     
+
     class Meta:
         model = Car
         fields = ('CarID', 'Manufacturer', 'Model', 'FuelType', 'Colour', 'LicensePlate', 'Status', 'Mileage', 'Branch', 'Type')
