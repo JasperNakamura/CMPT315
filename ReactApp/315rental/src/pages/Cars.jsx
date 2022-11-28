@@ -37,14 +37,14 @@ const Cars = () => {
   const location = useLocation();
   const [carData, setCarData] = useState('');
 
-  const [pickUpLocation, setPickUpLocation] = React.useState(location.state.PickUpLocation === null ? '' : location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state.DropOffLocation === null ? "" : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
-  const [pickUpDate, setPickUpDate] = React.useState(location.state.PickUpDate === null ? "" : location.state.PickUpDate);
-  const [dropOffDate, setDropOffDate] = React.useState(location.state.DropOffDate === null ? "" : location.state.DropOffDate);
+  const [pickUpLocation, setPickUpLocation] = React.useState(location.state.PickUpLocation == null ? '' : location.state.PickUpLocation);
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state.DropOffLocation == null ? "" : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
+  const [pickUpDate, setPickUpDate] = React.useState(location.state.PickUpDate == null ? "" : location.state.PickUpDate);
+  const [dropOffDate, setDropOffDate] = React.useState(location.state.DropOffDate == null ? "" : location.state.DropOffDate);
 
-  const [carType, setCarType] = React.useState('')
+  const [carType, setCarType] = useState('')
   const [manufacturer, setManuFacturer] = React.useState('')
-  const [color, setColour] = React.useState('')
+  const [colour, setColour] = React.useState('')
   const [fuelType, setFuelType] = React.useState('')
 
   const cardInfo = []
@@ -54,7 +54,11 @@ const Cars = () => {
   const getCars = async () => {
     axios.get(`${"http://localhost:8000/api/cars/?format=json" + 
     "&available=" + pickUpDate + "," + dropOffDate + 
-    "&Branch=" + pickUpLocation
+    "&Branch=" + pickUpLocation +
+    "&Type=" + carType +
+    "&Manufacturer=" + manufacturer +
+    "&Colour=" + colour +
+    "&FuelType=" + fuelType
   }`)
       .then(response => {
         setCars(response.data);
@@ -66,6 +70,8 @@ const Cars = () => {
   useEffect(() => {
     getCars()
   }, []);
+
+
 
   const renderCard = (card, index) => {
     return (
@@ -130,7 +136,16 @@ const Cars = () => {
 
   const {render, returnValue}  = CarFilter()
   /* return value is an obj of all the filter option - only update when filter/clear is clicked*/
-  console.log(returnValue)
+  useEffect(() => {
+    setCarType(returnValue.BodyType == null ? '' : returnValue.BodyType)
+    setColour(returnValue.Colors == null ? '' : returnValue.Colors)
+    setManuFacturer(returnValue.Manufacturers == null ? '' : returnValue.Manufacturers)
+    setFuelType(returnValue.Fuels == null ? '' : returnValue.Fuels)
+  },[returnValue])
+
+  useEffect(() =>{
+    getCars()
+  }, [carType, colour, fuelType, manufacturer])
 
   return (
     <div>

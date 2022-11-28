@@ -83,7 +83,8 @@ export default function CarFilter() {
     }
 
     const clearFilter = () =>{
-        setIsColorChecked(isManufacturerChecked.fill(false));
+        setIsManufacturerChecked(isManufacturerChecked.fill(false));
+        setIsColorChecked(isColorChecked.fill(false));
         setIsModelChecked(isModelChecked.fill(false));
         setIsTransmissionTypeChecked(isTransmissionTypeChecked.fill(false));
         setIsFuelTypeChecked(isFuelTypeChecked.fill(false));

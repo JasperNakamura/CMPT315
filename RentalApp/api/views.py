@@ -25,7 +25,6 @@ class AvailableCarFilterSet(filters.FilterSet):
     def typeFilter(self, queryset, field_name, value):
         if value:
             values = value.split(",")
-            print(CarType.objects.values_list('TypeID', flat=True).filter(Description__in=values))
             queryset = queryset.filter(Type__in=CarType.objects.values_list('TypeID', flat=True).filter(Description__in=values)).order_by('CarID')
             return queryset
         return queryset
