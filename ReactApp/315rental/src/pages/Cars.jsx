@@ -33,7 +33,7 @@ const theme = createTheme({
 })
 
 const Cars = () => {
-  
+
   const location = useLocation();
   const [carData, setCarData] = useState('');
 
@@ -52,23 +52,24 @@ const Cars = () => {
   const [cars, setCars] = useState([]);
 
   const getCars = async () => {
-    axios.get(`${"http://localhost:8000/api/cars/?format=json" + 
-    "&available=" + pickUpDate + "," + dropOffDate + 
-    "&Branch=" + pickUpLocation +
-    "&Type=" + carType +
-    "&Manufacturer=" + manufacturer +
-    "&Colour=" + colour +
-    "&FuelType=" + fuelType
-  }`)
+    axios.get(`${"http://localhost:8000/api/cars/?format=json" +
+      "&available=" + pickUpDate + "," + dropOffDate +
+      "&Branch=" + pickUpLocation.ID +
+      "&Type=" + carType +
+      "&Manufacturer=" + manufacturer +
+      "&Colour=" + colour +
+      "&FuelType=" + fuelType
+      }`)
       .then(response => {
         setCars(response.data);
       }).catch(error => {
-        console.log(error);
+        
       })
   }
 
   useEffect(() => {
-    getCars()
+    getCars();
+    getBranches();
   }, []);
 
 
@@ -110,12 +111,7 @@ const Cars = () => {
     cardInfo.push({ image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pavilioncars.co.uk%2Fassets%2Fuploaded%2Fimages%2Fvehicles%2F10424st1280089.png&f=1&nofb=1&ipt=014c64a0acbc9900558905b0cac243a51b168e5567c9ac94b5da7541321ebea3&ipo=images", CarName: car.Manufacturer + " " + car.Model, CarDetails: car.Colour })
     //console.log(car.Manufacturer)//
   }
-  const handlePickUpLocation = (event) => {
-    setPickUpLocation(event)
-  } 
-  const handleDropOffLocation = (event) => {
-    setDropOffLocation(event)
-  } 
+
 
   const handlePickUpDate = (event) => {
     setPickUpDate(moment(event).format("YYYY-MM-DD"))
@@ -125,25 +121,51 @@ const Cars = () => {
     setDropOffDate(moment(event).format("YYYY-MM-DD"))
   }
 
-  function handleVariableChanges (){
-    /* still not working, search on this page doesnt do anything*/
+  /* API Arrays */
+  const [branches, setBranches] = React.useState([]);
+
+  /* Branch API */
+  const getBranches = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/branches/?format=json`)
+      if (response.length > 0 || response.data !== undefined) {
+        setBranches(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleChange = (event) => {
+    const content = event.target.value.split(',');
+    if (event.target.id === "pickBranch_input_id") {
+      console.log("1", content[1], content[0])
+      setPickUpLocation({ City: content[1], ID: content[0] });
+    }
+    if (event.target.id === "dropBranch_input_id") {
+      console.log("2", content[1],content[0])
+      setDropOffLocation({ City: content[1], ID: content[0] });
+    }
+  };
+
+  function handleSubmit() {
     setPickUpLocation(pickUpLocation);
-    setDropOffLocation(dropOffLocation.toString().length === 0? pickUpLocation : dropOffLocation);
+    setDropOffLocation(dropOffLocation);
     setPickUpDate(pickUpDate);
     setDropOffDate(dropOffDate);
     getCars();
   }
 
-  const {render, returnValue}  = CarFilter()
+  const { render, returnValue } = CarFilter()
   /* return value is an obj of all the filter option - only update when filter/clear is clicked*/
   useEffect(() => {
     setCarType(returnValue.BodyType == null ? '' : returnValue.BodyType)
     setColour(returnValue.Colors == null ? '' : returnValue.Colors)
     setManuFacturer(returnValue.Manufacturers == null ? '' : returnValue.Manufacturers)
     setFuelType(returnValue.Fuels == null ? '' : returnValue.Fuels)
-  },[returnValue])
+  }, [returnValue])
 
-  useEffect(() =>{
+  useEffect(() => {
     getCars()
   }, [carType, colour, fuelType, manufacturer])
 
@@ -154,23 +176,58 @@ const Cars = () => {
       {/* Search Section */}
       <Box>
         <Container style={{ marginTop: '2em', marginBottom: '3em' }}>
-          <Grid container spacing={2} mb={4}>
-            <Grid item xs={5}>
-              <PickupSearch onChange={value => handlePickUpLocation(value)} value={pickUpLocation} />
+          <Card style={{ marginTop: '2em', marginBottom: '2em', padding: '2em' }}>
+            <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold' }} mb={1}>
+              Search Car
+            </Box>
+            <Grid container spacing={2} mb={4}>
+              <Grid item xs={4}>
+                <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+              </Grid>
+              <Grid item xs={4}>
+                <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+            <Grid container spacing={2} mb={4}>
+              <Grid item xs={6}>
+                <Box>
+                  <h2>Pick-Up Location</h2>
+                  <select
+                    required
+                    name="branch_ad"
+                    id="pickBranch_input_id"
+                    onChange={handleChange}
+                  >
+                    <option selected value={[pickUpLocation.BranchID, pickUpLocation.City]} disabled hidden>{pickUpLocation.City}</option>
+                    {branches.map((location, index) => {
+                      return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                    })}
+                  </select>
+                </Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box>
+                  <h2>Drop-Off Location</h2>
+                  <select
+                    required
+                    name="branch_ad"
+                    id="dropBranch_input_id"
+                    onChange={handleChange}
+                  >
+                    <option selected value={[dropOffLocation.BranchID, dropOffLocation.City]} disabled hidden>{dropOffLocation.City}</option>
+                    {branches.map((location, index) => {
+                      return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                    })}
+                  </select>
+                </Box>
+              </Grid>
+              <Grid item xs={1}>
+                <ThemeProvider theme={theme}>
+                  <Button variant="contained" onClick={handleSubmit}>Search</Button>
+                </ThemeProvider>
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
-            </Grid>
-            <Grid item xs={1}>
-              <ThemeProvider theme={theme}>
-                <Button variant="contained" onClick={handleVariableChanges}>Search</Button>
-              </ThemeProvider>
-            </Grid>
-          </Grid>
-          <DropoffSearch onChange={value => handleDropOffLocation(value)} value={dropOffLocation} />
+          </Card>
         </Container>
       </Box>
 
