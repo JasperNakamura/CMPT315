@@ -9,7 +9,12 @@ import DateReturn from '../../components/DateReturnedSelector';
 export default function Returns() {
   /* From StackOverflow */
   function currencyFormat(num) {
-    return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    if (num != null) {
+        return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    else {
+        return null
+    }
   }
 
   /* MUI DataTable */
@@ -52,7 +57,7 @@ export default function Returns() {
   const getRentals = async () => {
     axios.get(`http://127.0.0.1:8000/api/rentals/?format=json`)
         .then(response => {
-            let filtered = response.data.filter(a => a.DateReturned == null && a.TotalCost == null)
+          let filtered = response.data.filter(a => a.DateReturned == null && a.TotalCost == null && a.Employee != null)
             setRentals(filtered);
         }).catch(error => {
             console.log(error);

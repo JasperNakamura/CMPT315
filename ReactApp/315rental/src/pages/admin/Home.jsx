@@ -52,7 +52,7 @@ export default function Home() {
     const getRentals = async () => {
         axios.get(`http://127.0.0.1:8000/api/rentals/?format=json`)
             .then(response => {
-                let filtered = response.data.filter(a => a.DateReturned != null && a.TotalCost != null)
+                let filtered = response.data.filter(a => a.DateReturned != null && a.TotalCost != null && a.Employee != null)
                 setRentals(filtered);
             }).catch(error => {
                 console.log(error);
