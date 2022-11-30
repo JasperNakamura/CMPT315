@@ -25,7 +25,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('ID', 'FirstName', 'LastName', 'DriversLicense', 'Email', 'PhoneNum', 'DOB', 'GoldMember', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber')
+        fields = ('ID', 'FirstName', 'LastName', 'DriversLicense', 'Email', 'PhoneNum', 'DOB', 'GoldMember', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber', 'Banned')
 
 class RentalSerializer(serializers.ModelSerializer):
     class Meta:
