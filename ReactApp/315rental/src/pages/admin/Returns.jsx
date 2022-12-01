@@ -5,8 +5,43 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/AdminHeader"
 import axios from 'axios';
 import DateReturn from '../../components/DateReturnedSelector';
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Dialog from "@mui/material/Dialog";
+import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 
 export default function Returns() {
+
+
+
+  /*
+  This function is an on click event that appends to the rental   
+  */
+  function rentalEmployee() {
+    //check first if selectedRow array is empty or not
+    console.log(selectedRow);
+    if (selectedRow === null || selectedRow.length === 0) {handleInvalid()}
+
+    //if array is not empty, begin calculating total cost
+
+    //grab car's total cost
+    /**
+     * 1. grab car's (id or name) from API and grab car's cost      ()
+     * 2. grab return date and check if return date is less than expected return date 
+     *      -test: $5 late fee for day between expected return date and returned date
+     * 3. 
+     */
+
+    else {
+      console.log(selectedRow[0].car);
+      handleSuccess();
+
+    }
+    
+
+  }
+
+
   /* From StackOverflow */
   function currencyFormat(num) {
     if (num != null) {
@@ -47,12 +82,26 @@ export default function Returns() {
     }
   }
 
+  //states:
+
+  const [invalid,setInvalid] = useState(false);         //boolean states that are required to show alert box if user didn't select anything in datagrid
+  const [success,setSuccess] = useState(false);      //boolean states that shows alert box if user successfully sets cost and return date
+  const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
   const [rentals, setRentals] = useState([]);
   const [cars, setCars] = useState([]);
   const [cartypes, setCartypes] = useState([]);
   const [branches, setBranches] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
+
+  const handleInvalid = () => {
+    setInvalid(!invalid);
+  }
+
+  const handleSuccess = () => {
+    setSuccess(!success);
+  }
+
 
   const getRentals = async () => {
     axios.get(`http://127.0.0.1:8000/api/rentals/?format=json`)
@@ -172,7 +221,23 @@ export default function Returns() {
         <Box maxWidth="sx" sx={{border: '1px solid grey', borderRadius: '1em', padding: '1em', margin: '1em', backgroundColor: '#fff'}}>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
               <Box sx={{ height: 400, width: '100%' }}>
-                  <DataGrid rows={rows} columns={columns} />
+                  <DataGrid 
+                  rows={rows} 
+                  columns={columns}
+                  
+                  /*Once user selects a row in DataGrid, save the row to an array*/
+
+                  onSelectionModelChange={(item) => {
+                    
+                      const selectedItem = new Set(item);
+                      
+                      const selectedItemData = rows.filter((row) => selectedItem.has(row.id));
+                      setSelectedRow(selectedItemData);
+                      
+                      
+                  }}
+                  
+                  />
               </Box>
           </Paper>
         </Box>
@@ -202,13 +267,60 @@ export default function Returns() {
                 <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} 
                 variant="contained"
                 name="button_add" 
-                /* onClick={rentalEmployee} */>
+                onClick={rentalEmployee}>
                   Set Cost & Return Date
               </Button>
             </Grid>   
           </Grid> 
         </Card>
-      </Container>
+      </Container> 
+      {/*Dialog shows when user doesn't select anything*/} 
+      <Dialog open={invalid} onClose={handleInvalid}>
+        <Alert
+          severity="warning"
+          color="error"
+          
+          icon={<AccessAlarmIcon />}
+          onClose={() => {}}
+          closeText="Doesn't Work!"
+          sx={{
+            // width: '80%',
+            // margin: 'auto',
+            "& .MuiAlert-icon": {
+              color: "blue"
+            }
+            //backgroundColor: "green"
+          }}
+        >
+          <AlertTitle>No car is selected!</AlertTitle>
+          Please select a car to be returned.
+        </Alert>
+      </Dialog>
+      {/*Dialog shows when user successfully returns rental*/}
+      <Dialog open={success} onClose={handleSuccess}>
+      <Alert
+        severity="success"
+        
+        
+      
+        onClose={() => {}}
+        closeText="Doesn't Work!"
+        sx={{
+          // width: '80%',
+          // margin: 'auto',
+          "& .MuiAlert-icon": {
+            color: "blue"
+          }
+          //backgroundColor: "green"
+        }}
+      >
+        <AlertTitle>Success!</AlertTitle>
+        You've successfully returned the item.
+      </Alert>
+    </Dialog>
+
     </Box> 
+    
+
   )
 }
