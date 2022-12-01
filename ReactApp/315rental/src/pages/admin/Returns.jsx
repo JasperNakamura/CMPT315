@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from "react";
 import Header from "../../components/AdminHeader"
 import axios from 'axios';
+import moment from 'moment';
 import DateReturn from '../../components/DateReturnedSelector';
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -11,6 +12,13 @@ import Dialog from "@mui/material/Dialog";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 
 export default function Returns() {
+  
+  const handleReturnDate = (event) => {
+  console.log(moment(event).format("YYYY-MM-DD"))
+  setReturnDate(moment(event).format("YYYY-MM-DD"))
+  }
+
+
 
 
 
@@ -18,9 +26,12 @@ export default function Returns() {
   This function is an on click event that appends to the rental   
   */
   function rentalEmployee() {
-    //check first if selectedRow array is empty or not
+   
     console.log(selectedRow);
-    if (selectedRow === null || selectedRow.length === 0) {handleInvalid()}
+    //check if date is selected 
+    if (returnDate === null) {handleNoDate()}
+    //check if selectedRow array is empty or not
+    else if (selectedRow === null || selectedRow.length === 0) {handleInvalid()}
 
     //if array is not empty, begin calculating total cost
 
@@ -33,8 +44,76 @@ export default function Returns() {
      */
 
     else {
-      console.log(selectedRow[0].car);
+      //var dateToReturn = DateReturn.value;
+      var isLate = false;
+      const DAY_IN_WEEK = 7;
+      const WEEK_IN_MONTH = 4;
+      const DAY = 1000 * 60 * 60 * 24;
+      //initialize cost
+      var cost = 0.0;
+
+      var carType = selectedRow[0].carType;
+      //find matching car type here:
+      var match = cartypes.find((type) => type.CarType === carType);
+      //get daily cost, weekly cost, monthly cost here:
+      var dailyCost = parseFloat(match.DailyCost);
+      var weeklyCost = parseFloat(match.WeeklyCost);
+      var monthlyCost = parseFloat(match.MonthlyCost);
+      var lateFee = parseFloat(match.LateFee);
+
+      //get expected return date
+      var dateTo = selectedRow[0].to;
+      var dateFrom = selectedRow[0].from;
+      var newDateFrom = dateFrom.split('-').join('/');
+      var newReturnDate = returnDate.split('-').join('/');
+      var newDateTo = dateTo.split('-').join('/');
+    
+      newDateFrom = new Date(newDateFrom);
+      newReturnDate = new Date(newReturnDate);
+      newDateTo = new Date(newDateTo);
+     
+      //check if inputted return date is greater than expected return date:
+      if (newDateTo < newReturnDate){
+        console.log("late!");
+        isLate = true;
+      }
+
+      //calculate first the difference between days from dateTo to dateFrom
+      var diffDays = Math.round((newDateTo - newDateFrom) / DAY);
+
+      //check if diffDays is less than 7; if it is, then calculate daily costs:
+      if (diffDays <= DAY_IN_WEEK){
+        cost += diffDays * dailyCost;
+      }
+      else{
+        var numWeeks = Math.floor(diffDays/DAY_IN_WEEK);
+        console.log(numWeeks);
+        //if number of weeks is greater than weeks in a month, calculate monthly costs
+        if (numWeeks > WEEK_IN_MONTH){
+          var numMonths = Math.floor(numWeeks/DAY_IN_WEEK);
+          cost += numMonths * monthlyCost;
+        }
+        else {
+          console.log(numWeeks);
+          console.log(weeklyCost);
+          cost += numWeeks * weeklyCost;
+          
+        }
+      }
+
+      //check if returned car is late:
+      if (isLate){
+        cost += lateFee;
+      }
+
+      console.log(currencyFormat(cost));
+
+
       handleSuccess();
+
+      //get element of textbox where total cost is located:
+      const elem = document.getElementById('mileage_input_id');
+      elem.value = currencyFormat(cost);
 
     }
     
@@ -83,16 +162,21 @@ export default function Returns() {
   }
 
   //states:
-
-  const [invalid,setInvalid] = useState(false);         //boolean states that are required to show alert box if user didn't select anything in datagrid
-  const [success,setSuccess] = useState(false);      //boolean states that shows alert box if user successfully sets cost and return date
+  const [noDate, setNoDate] = useState(false);
+  const [invalid,setInvalid] = useState(false);        // boolean states that are required to show alert box if user didn't select anything in datagrid
+  const [success,setSuccess] = useState(false);        // boolean states that shows alert box if user successfully sets cost and return date
   const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
+  const [returnDate,setReturnDate] = useState(null);
   const [rentals, setRentals] = useState([]);
   const [cars, setCars] = useState([]);
   const [cartypes, setCartypes] = useState([]);
   const [branches, setBranches] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
+  
+  const handleNoDate = () => {
+    setNoDate(!noDate);
+  }
 
   const handleInvalid = () => {
     setInvalid(!invalid);
@@ -259,7 +343,7 @@ export default function Returns() {
               />
             </Box>
             <Box>
-              <DateReturn/>
+              <DateReturn onChange={value => handleReturnDate(value)} value={returnDate}/>
             </Box>
           </Box>
           <Grid container spacing={0} justifyContent="center">
@@ -274,6 +358,28 @@ export default function Returns() {
           </Grid> 
         </Card>
       </Container> 
+      {/*Dialog shows when user doesn't select anything*/} 
+      <Dialog open={noDate} onClose={handleNoDate}>
+        <Alert
+          severity="warning"
+          color="error"
+          
+          icon={<AccessAlarmIcon />}
+          onClose={() => {}}
+          closeText="Doesn't Work!"
+          sx={{
+            // width: '80%',
+            // margin: 'auto',
+            "& .MuiAlert-icon": {
+              color: "blue"
+            }
+            //backgroundColor: "green"
+          }}
+        >
+          <AlertTitle>No date is selected!</AlertTitle>
+          Please select a return date.
+        </Alert>
+      </Dialog>
       {/*Dialog shows when user doesn't select anything*/} 
       <Dialog open={invalid} onClose={handleInvalid}>
         <Alert
