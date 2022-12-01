@@ -1,9 +1,7 @@
 import * as React from 'react';
-import moment from 'moment';
 import TextField from '@mui/material/TextField';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 export default function MaterialUIPickers(props) {
@@ -18,7 +16,7 @@ export default function MaterialUIPickers(props) {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
         <DesktopDatePicker
-          label="Pick-up Date"
+          label="Date-Returned"
           inputFormat="MM/DD/YYYY"
           disablePast
           value={value}

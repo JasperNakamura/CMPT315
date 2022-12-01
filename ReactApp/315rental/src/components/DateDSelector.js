@@ -19,6 +19,7 @@ export default function MaterialUIPickers(props) {
         <DesktopDatePicker
           label="Drop-off date"
           inputFormat="MM/DD/YYYY"
+          disablePast
           value={value}
           onChange={handleChange}
           renderInput={(params) => <TextField {...params} />}

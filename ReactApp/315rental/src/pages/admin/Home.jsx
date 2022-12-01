@@ -52,7 +52,7 @@ export default function Home() {
     const getRentals = async () => {
         axios.get(`http://127.0.0.1:8000/api/rentals/?format=json`)
             .then(response => {
-                let filtered = response.data.filter(a => a.DateReturned != null)
+                let filtered = response.data.filter(a => a.DateReturned != null && a.TotalCost != null && a.Employee != null)
                 setRentals(filtered);
             }).catch(error => {
                 console.log(error);
@@ -208,7 +208,7 @@ export default function Home() {
     }
 
     return (
-        <Box sx={{height: '100vh', backgroundColor: '#21033a'}}>
+        <Box sx={{height: '100%', backgroundColor: '#21033a', paddingBottom: '5em'}}>
             <Header/>
 
             {/* Table */}
@@ -216,7 +216,7 @@ export default function Home() {
                 <h1>Returned Rentals</h1>
                 <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                     <Box sx={{ height: 400, width: '100%' }}>
-                    <DataGrid rows={rows} columns={columns} />
+                        <DataGrid rows={rows} columns={columns} />
                     </Box>
                 </Paper>
             </Box>

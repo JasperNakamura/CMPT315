@@ -93,7 +93,7 @@ class EmployeeView(viewsets.ModelViewSet):
 class CustomerInfoFilter(filters.FilterSet):
     class Meta:
         model = Customer
-        fields = ('ID', 'FirstName', 'LastName', 'DriversLicense', 'Email', 'PhoneNum', 'DOB', 'GoldMember', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber')
+        fields = ('ID', 'FirstName', 'LastName', 'DriversLicense', 'Email', 'PhoneNum', 'DOB', 'GoldMember', 'Province', 'City', 'PostalCode', 'StreetNumber', 'StreetName', 'UnitNumber', 'Banned')
 
 class CustomerView(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
