@@ -106,127 +106,129 @@ const Home = () => {
     const content = event.target.value.split(',');
     if (event.target.id === "pickBranch_input_id") {
       setPickUpBranch({ City: content[1], ID: content[0] });
+
     }
     if (event.target.id === "dropBranch_input_id") {
       setDropOffBranch({ City: content[1], ID: content[0] });
     }
-    console.log(pickUpBranch)
-    console.log(dropOffBranch)
+
   };
 
   return (
-    <Box bgcolor='#21033a'>
-      {/* MUI's CSS Normalize */}
-      <CssBaseline />
-      {/*Header section from component*/}
-      <Header />
+      <Box bgcolor='#21033a' >
+        {/* MUI's CSS Normalize */}
+        <CssBaseline />
+        {/*Header section from component*/}
+        <Header />
 
-      <Box sx={{ minHeight: '70vh' }}>
-        {/*Box Container is MUI standard convention for styling*/}
-        <Box>
-          <Container>
-            <Card style={{ marginTop: '2em', marginBottom: '2em', padding: '2em' }}>
-              <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold' }} mb={1}>
-                Search Car
+        <Box sx={{ minHeight: '70vh' }}>
+          {/*Box Container is MUI standard convention for styling*/}
+          <Box>
+            <Container>
+              <Card style={{ marginTop: '2em', marginBottom: '2em', padding: '2em' }}>
+                <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold' }} mb={1}>
+                  Search Car
+                </Box>
+                <Grid container spacing={2} mb={4}>
+                  <Grid item xs={4}>
+                    <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={2} mb={4}>
+                  <Grid item xs={6}>
+                    <Box>
+                      <h2>Pick-Up Location</h2>
+                      <select
+                        required
+                        name="branch_ad"
+                        id="pickBranch_input_id"
+                        onChange={handleChange}
+                        defaultValue={"ー Select Pick-Up Location ー"}
+                      >
+                        <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Pick-Up Location ー </option>
+                        {branches.map((location, index) => {
+                          return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                        })}
+                      </select>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box>
+                      <h2>Drop-Off Location</h2>
+                      <select
+                        required
+                        name="branch_ad"
+                        id="dropBranch_input_id"
+                        onChange={handleChange}
+                        defaultValue={"ー Select Pick-Up Location ー"}
+                      >
+                        <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Drop-Off Location ー </option>
+                        {branches.map((location, index) => {
+                          return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                        })}
+                      </select>
+                    </Box>
+                  </Grid>
+                </Grid>
+
+                <Box display='flex' justifyContent={'center'}>
+                  <ThemeProvider theme={theme}>
+                    <Button variant="contained" component={RouterLink} to={"/cars"} state={{
+                      /*passing data here*/
+                      PickUpLocation: pickUpBranch,
+                      DropOffLocation: dropOffBranch === null ? pickUpBranch : dropOffBranch,
+                      PickUpDate: pickUpDate,
+                      DropOffDate: dropOffDate
+                    }}>Search</Button>
+                  </ThemeProvider>
+                </Box>
+              </Card>
+            </Container>
+          </Box>
+
+          <Box sx={{ backgroundColor: '#fff', height: '10vh', marginTop: '4em', marginBottom: '4em', display: 'flex', alignContent: 'center' }}>
+            <Container sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
+                <CheckIcon sx={{ fontSize: 40 }} />
+                <h2>A trusted Car Rental Brand</h2>
               </Box>
-              <Grid container spacing={2} mb={4}>
-                <Grid item xs={4}>
-                  <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
-                </Grid>
-                <Grid item xs={4}>
-                  <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
-                </Grid>
-              </Grid>
-              <Grid container spacing={2} mb={4}>
-                <Grid item xs={6}>
-                  <Box>
-                    <h2>Pick-Up Location</h2>
-                    <select
-                      required
-                      name="branch_ad"
-                      id="pickBranch_input_id"
-                      onChange={handleChange}
-                    >
-                      <option disabled selected value> ー Select Pick-Up Location ー </option>
-                      {branches.map((location, index) => {
-                        return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
-                      })}
-                    </select>
-                  </Box>
-                </Grid>
-                <Grid item xs={6}>
-                  <Box>
-                    <h2>Drop-Off Location</h2>
-                    <select
-                      required
-                      name="branch_ad"
-                      id="dropBranch_input_id"
-                      onChange={handleChange}
-                    >
-                      <option disabled selected value> ー Select Drop-Off Location ー </option>
-                      {branches.map((location, index) => {
-                        return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
-                      })}
-                    </select>
-                  </Box>
-                </Grid>
-              </Grid>
-
-              <Box display='flex' justifyContent={'center'}>
-                <ThemeProvider theme={theme}>
-                  <Button variant="contained" component={RouterLink} to={"/cars"} state={{
-                    /*passing data here*/
-                    PickUpLocation: pickUpBranch,
-                    DropOffLocation: dropOffBranch === null ? pickUpBranch : dropOffBranch,
-                    PickUpDate: pickUpDate,
-                    DropOffDate: dropOffDate
-                  }}>Search</Button>
-                </ThemeProvider>
+              <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
+                <LocalOfferIcon sx={{ fontSize: 40 }} />
+                <h2>Book a car in 3 easy steps</h2>
               </Box>
-            </Card>
-          </Container>
+              <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
+                <PaidIcon sx={{ fontSize: 40 }} />
+                <h2>Find great deals</h2>
+              </Box>
+            </Container>
+
+          </Box>
+
+          {/*Popular Car Type Carousel*/}
+          <Box>
+            <Container>
+              <Box sx={{ fontSize: 'h5.fontSize', color: '#fff' }}>
+                Popular Car Type
+              </Box>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(6, 1fr)',
+                  bgcolor: 'inherit',
+                  borderRadius: 1,
+                }}>
+                {cardInfo.map(renderCard)}
+              </Box>
+            </Container>
+          </Box>
         </Box>
 
-        <Box sx={{ backgroundColor: '#fff', height: '10vh', marginTop: '4em', marginBottom: '4em', display: 'flex', alignContent: 'center' }}>
-          <Container sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
-              <CheckIcon sx={{ fontSize: 40 }} />
-              <h2>A trusted Car Rental Brand</h2>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
-              <LocalOfferIcon sx={{ fontSize: 40 }} />
-              <h2>Book a car in 3 easy steps</h2>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', margin: '0 auto' }}>
-              <PaidIcon sx={{ fontSize: 40 }} />
-              <h2>Find great deals</h2>
-            </Box>
-          </Container>
-
-        </Box>
-
-        {/*Popular Car Type Carousel*/}
-        <Box>
-          <Container>
-            <Box sx={{ fontSize: 'h5.fontSize', color: '#fff' }}>
-              Popular Car Type
-            </Box>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(6, 1fr)',
-                bgcolor: 'inherit',
-                borderRadius: 1,
-              }}>
-              {cardInfo.map(renderCard)}
-            </Box>
-          </Container>
-        </Box>
+        {/*Footer Section*/}
+        <Footer />
       </Box>
-
-      {/*Footer Section*/}
-      <Footer />
-    </Box>
   );
 };
 
