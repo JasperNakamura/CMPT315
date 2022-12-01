@@ -37,10 +37,11 @@ const Cars = () => {
   const location = useLocation();
   const [carData, setCarData] = useState('');
 
-  const [pickUpLocation, setPickUpLocation] = React.useState(location.state.PickUpLocation == null ? '' : location.state.PickUpLocation);
-  const [dropOffLocation, setDropOffLocation] = React.useState(location.state.DropOffLocation == null ? "" : location.state.DropOffLocation === null ? location.state.PickUpLocation : location.state.DropOffLocation);
-  const [pickUpDate, setPickUpDate] = React.useState(location.state.PickUpDate == null ? "" : location.state.PickUpDate);
-  const [dropOffDate, setDropOffDate] = React.useState(location.state.DropOffDate == null ? "" : location.state.DropOffDate);
+  const [pickUpLocation, setPickUpLocation] = React.useState(location.state  === null ? null : location.state.PickUpLocation );
+  const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : (location.state.DropOffLocation === null? location.state.PickUpLocation : location.state.DropOffLocation ));
+  const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
+  const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
+
 
   const [carType, setCarType] = useState('')
   const [manufacturer, setManuFacturer] = React.useState('')
@@ -54,7 +55,7 @@ const Cars = () => {
   const getCars = async () => {
     axios.get(`${"http://localhost:8000/api/cars/?format=json" +
       "&available=" + pickUpDate + "," + dropOffDate +
-      "&Branch=" + pickUpLocation.ID +
+      "&Branch=" + (pickUpLocation || {}).ID+
       "&Type=" + carType +
       "&Manufacturer=" + manufacturer +
       "&Colour=" + colour +
@@ -72,15 +73,13 @@ const Cars = () => {
     getBranches();
   }, []);
 
-
-
   const renderCard = (card, index) => {
     return (
       <Card sx={{ width: '100%', marginBottom: '2em', marginLeft: '2em' }}>
         <CardActionArea component={RouterLink} to={"/details"} state={{
           /*passing data here*/
-          PickUpLocation: pickUpLocation,
-          DropOffLocation: dropOffLocation === null ? pickUpLocation : dropOffLocation,
+          PickUpLocation: branches[pickUpLocation.Index],
+          DropOffLocation: dropOffLocation === null ? branches[pickUpLocation.Index] : branches[dropOffLocation.Index],
           PickUpDate: pickUpDate,
           DropOffDate: dropOffDate,
           CarDetails: cars[index]
@@ -123,6 +122,7 @@ const Cars = () => {
 
   /* API Arrays */
   const [branches, setBranches] = React.useState([]);
+  
 
   /* Branch API */
   const getBranches = async () => {
@@ -132,19 +132,17 @@ const Cars = () => {
         setBranches(response.data);
       }
     } catch (error) {
-      console.log(error);
+      
     }
   }
 
   const handleChange = (event) => {
     const content = event.target.value.split(',');
     if (event.target.id === "pickBranch_input_id") {
-      console.log("1", content[1], content[0])
-      setPickUpLocation({ City: content[1], ID: content[0] });
+      setPickUpLocation({ City: content[1], ID: content[0], Index: content[2] });
     }
     if (event.target.id === "dropBranch_input_id") {
-      console.log("2", content[1],content[0])
-      setDropOffLocation({ City: content[1], ID: content[0] });
+      setDropOffLocation({ City: content[1], ID: content[0], Index: content[2] });
     }
   };
 
@@ -170,7 +168,7 @@ const Cars = () => {
   }, [carType, colour, fuelType, manufacturer])
 
   return (
-    <div>
+    <div >
       <Header />
 
       {/* Search Section */}
@@ -197,10 +195,11 @@ const Cars = () => {
                     name="branch_ad"
                     id="pickBranch_input_id"
                     onChange={handleChange}
+                    defaultValue={pickUpLocation === null? 'ー Select Pick-Up Location ー': [pickUpLocation.BranchID, pickUpLocation.City]}
                   >
-                    <option selected value={[pickUpLocation.BranchID, pickUpLocation.City]} disabled hidden>{pickUpLocation.City}</option>
+                    <option key={-1} value={pickUpLocation === null? 'ー Select Pick-Up Location ー': [pickUpLocation.BranchID, pickUpLocation.City]} disabled hidden>{pickUpLocation === null? 'ー Select Pick-Up Location ー':pickUpLocation.City}</option>
                     {branches.map((location, index) => {
-                      return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                      return <option key={index} value={[location.BranchID, location.City, index]}>{location.City}</option>
                     })}
                   </select>
                 </Box>
@@ -212,18 +211,19 @@ const Cars = () => {
                     required
                     name="branch_ad"
                     id="dropBranch_input_id"
-                    onChange={handleChange}
-                  >
-                    <option selected value={[dropOffLocation.BranchID, dropOffLocation.City]} disabled hidden>{dropOffLocation.City}</option>
+                    onChange={handleChange}        
+                    defaultValue={dropOffLocation === null? 'ー Select Pick-Up Location ー': [dropOffLocation.BranchID, dropOffLocation.City]}
+                    >
+                      <option key={-1} value={dropOffLocation === null? 'ー Select Pick-Up Location ー': [dropOffLocation.BranchID, dropOffLocation.City]} disabled hidden>{dropOffLocation === null? 'ー Select Pick-Up Location ー':dropOffLocation.City}</option>
                     {branches.map((location, index) => {
-                      return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                      return <option key={index} value={[location.BranchID, location.City, index]}>{location.City}</option>
                     })}
                   </select>
                 </Box>
               </Grid>
               <Grid item xs={1}>
                 <ThemeProvider theme={theme}>
-                  <Button variant="contained" onClick={handleSubmit}>Search</Button>
+                  <Button variant="contained" onClick={handleSubmit}>Search</Button> 
                 </ThemeProvider>
               </Grid>
             </Grid>
