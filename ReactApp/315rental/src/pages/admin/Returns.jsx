@@ -23,11 +23,11 @@ export default function Returns() {
 
 
   /*
-  This function is an on click event that appends to the rental   
+  This function is an on click asynchronous event that appends to the rental   
   */
-  function rentalEmployee() {
+  const rentalEmployee = async (event) => {
    
-    console.log(selectedRow);
+  
     //check if date is selected 
     if (returnDate === null) {handleNoDate()}
     //check if selectedRow array is empty or not
@@ -40,7 +40,7 @@ export default function Returns() {
      * 1. grab car's (id or name) from API and grab car's cost      ()
      * 2. grab return date and check if return date is less than expected return date 
      *      -test: $5 late fee for day between expected return date and returned date
-     * 3. 
+     * 3. insert data respectively to the api using axios
      */
 
     else {
@@ -52,6 +52,7 @@ export default function Returns() {
       //initialize cost
       var cost = 0.0;
 
+      var rentalID = selectedRow[0].id;
       var carType = selectedRow[0].carType;
       //find matching car type here:
       var match = cartypes.find((type) => type.CarType === carType);
@@ -60,10 +61,12 @@ export default function Returns() {
       var weeklyCost = parseFloat(match.WeeklyCost);
       var monthlyCost = parseFloat(match.MonthlyCost);
       var lateFee = parseFloat(match.LateFee);
+      var branchFee = parseFloat(match.BranchFee);
 
       //get expected return date
       var dateTo = selectedRow[0].to;
       var dateFrom = selectedRow[0].from;
+      //parse dates appropriately to begin calculating date differences
       var newDateFrom = dateFrom.split('-').join('/');
       var newReturnDate = returnDate.split('-').join('/');
       var newDateTo = dateTo.split('-').join('/');
@@ -100,20 +103,65 @@ export default function Returns() {
           
         }
       }
-
+      var rentMatch = rentals.find((rent) => rent.RentalID === rentalID);
+      
       //check if returned car is late:
       if (isLate){
         cost += lateFee;
       }
 
-      console.log(currencyFormat(cost));
+      //if branchfrom and branchto are not identical, apply branch fee
+      if (rentMatch.BranchFrom != rentMatch.BranchTo){
+        cost += branchFee;
+      }
+      
 
+      var totalCost = cost.toFixed(1);
+
+      
 
       handleSuccess();
 
       //get element of textbox where total cost is located:
       const elem = document.getElementById('mileage_input_id');
       elem.value = currencyFormat(cost);
+
+      
+
+
+
+      console.log(typeof rentalID);
+      console.log(typeof rentMatch.Customer);
+      console.log(typeof rentMatch.Employee);
+      console.log(typeof rentMatch.BranchFrom);
+      console.log(typeof rentMatch.BranchTo);
+      console.log(typeof rentMatch.Car);
+      console.log(typeof rentMatch.CarType);
+      console.log(returnDate);
+      event.preventDefault();
+
+      //rentMatch=object that is obtained from rentals array by its corresponding
+      //id
+      //rentalID=key as id for rental tables
+      //begin updating the object to the back-end using axios
+      await axios.put(`https://127.0.0.1:8000/api/rentals/${rentalID.toString()}/`, {
+        DateFrom: rentMatch.DateFrom,
+        DateTo: rentMatch.DateTo,
+        DateReturned: returnDate,
+        TotalCost: totalCost.toString(),
+        LicensePlate: rentMatch.LicensePlate,
+        GoldMember: rentMatch.GoldMember,
+        Customer: rentMatch.Customer.toString(),
+        Employee: rentMatch.Employee.toString(),
+        BranchFrom: rentMatch.BranchFrom.toString(),
+        BranchTo: rentMatch.BranchTo,
+        Car: rentMatch.Car,
+        CarType: rentMatch.CarType,
+      })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
 
     }
     
