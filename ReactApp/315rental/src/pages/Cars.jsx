@@ -89,7 +89,7 @@ const Cars = () => {
             component="img"
             height="180px"
             /*Add image here*/
-            image={card.image}
+            image={`assets/images/${card.id}.png`}
             alt="car"
           />
           <CardContent>
@@ -108,7 +108,7 @@ const Cars = () => {
 
   {/*Change image placeholder link later*/ }
   for (let car of cars) {
-    cardInfo.push({ image: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.pavilioncars.co.uk%2Fassets%2Fuploaded%2Fimages%2Fvehicles%2F10424st1280089.png&f=1&nofb=1&ipt=014c64a0acbc9900558905b0cac243a51b168e5567c9ac94b5da7541321ebea3&ipo=images", CarName: car.Manufacturer + " " + car.Model, CarDetails: car.Colour })
+    cardInfo.push({ id: car.CarID, CarName: car.Manufacturer + " " + car.Model, CarDetails: car.Colour })
     //console.log(car.Manufacturer)//
   }
 
