@@ -41,8 +41,6 @@ const Cars = () => {
   const [dropOffLocation, setDropOffLocation] = React.useState(location.state === null ? null : (location.state.DropOffLocation === null? location.state.PickUpLocation : location.state.DropOffLocation ));
   const [pickUpDate, setPickUpDate] = React.useState(location.state === null ? null : location.state.PickUpDate);
   const [dropOffDate, setDropOffDate] = React.useState(location.state === null ? null : location.state.DropOffDate);
-
-
   const [carType, setCarType] = useState('')
   const [manufacturer, setManuFacturer] = React.useState('')
   const [colour, setColour] = React.useState('')
@@ -55,7 +53,7 @@ const Cars = () => {
   const getCars = async () => {
     axios.get(`${"http://localhost:8000/api/cars/?format=json" +
       "&available=" + pickUpDate + "," + dropOffDate +
-      "&Branch=" + (pickUpLocation || {}).ID+
+      "&Branch=" + (pickUpLocation === null? null: pickUpLocation.Data.BranchID)+
       "&Type=" + carType +
       "&Manufacturer=" + manufacturer +
       "&Colour=" + colour +
@@ -78,8 +76,8 @@ const Cars = () => {
       <Card sx={{ width: '100%', marginBottom: '2em', marginLeft: '2em' }}>
         <CardActionArea component={RouterLink} to={"/details"} state={{
           /*passing data here*/
-          PickUpLocation: branches[pickUpLocation.Index],
-          DropOffLocation: dropOffLocation === null ? branches[pickUpLocation.Index] : branches[dropOffLocation.Index],
+          PickUpLocation: pickUpLocation,
+          DropOffLocation: dropOffLocation === null ? pickUpLocation: dropOffLocation,
           PickUpDate: pickUpDate,
           DropOffDate: dropOffDate,
           CarDetails: cars[index]
@@ -137,18 +135,15 @@ const Cars = () => {
   }
 
   const handleChange = (event) => {
-    const content = event.target.value.split(',');
     if (event.target.id === "pickBranch_input_id") {
-      setPickUpLocation({ City: content[1], ID: content[0], Index: content[2] });
+      setPickUpLocation({ Data: branches[ event.target.value], Index: event.target.value });
     }
     if (event.target.id === "dropBranch_input_id") {
-      setDropOffLocation({ City: content[1], ID: content[0], Index: content[2] });
+      setDropOffLocation({ Data: branches[ event.target.value], Index: event.target.value });
     }
   };
 
   function handleSubmit() {
-    setPickUpLocation(pickUpLocation);
-    setDropOffLocation(dropOffLocation);
     setPickUpDate(pickUpDate);
     setDropOffDate(dropOffDate);
     getCars();
@@ -195,11 +190,11 @@ const Cars = () => {
                     name="branch_ad"
                     id="pickBranch_input_id"
                     onChange={handleChange}
-                    defaultValue={pickUpLocation === null? 'ー Select Pick-Up Location ー': [pickUpLocation.BranchID, pickUpLocation.City]}
+                    defaultValue={pickUpLocation === null? 'ー Select Pick-Up Location ー': pickUpLocation.Index}
                   >
-                    <option key={-1} value={pickUpLocation === null? 'ー Select Pick-Up Location ー': [pickUpLocation.BranchID, pickUpLocation.City]} disabled hidden>{pickUpLocation === null? 'ー Select Pick-Up Location ー':pickUpLocation.City}</option>
+                    <option key={-1} value={pickUpLocation === null? 'ー Select Pick-Up Location ー': pickUpLocation.Index} disabled hidden>{pickUpLocation === null? 'ー Select Pick-Up Location ー':pickUpLocation.Data.City}</option>
                     {branches.map((location, index) => {
-                      return <option key={index} value={[location.BranchID, location.City, index]}>{location.City}</option>
+                      return <option key={index} value={index}>{location.City}</option>
                     })}
                   </select>
                 </Box>
@@ -212,11 +207,11 @@ const Cars = () => {
                     name="branch_ad"
                     id="dropBranch_input_id"
                     onChange={handleChange}        
-                    defaultValue={dropOffLocation === null? 'ー Select Pick-Up Location ー': [dropOffLocation.BranchID, dropOffLocation.City]}
+                    defaultValue={dropOffLocation === null? 'ー Select Pick-Up Location ー': dropOffLocation.Index}
                     >
-                      <option key={-1} value={dropOffLocation === null? 'ー Select Pick-Up Location ー': [dropOffLocation.BranchID, dropOffLocation.City]} disabled hidden>{dropOffLocation === null? 'ー Select Pick-Up Location ー':dropOffLocation.City}</option>
+                      <option key={-1} value={dropOffLocation === null? 'ー Select Pick-Up Location ー': dropOffLocation.Index} disabled hidden>{dropOffLocation === null? 'ー Select Pick-Up Location ー':dropOffLocation.Data.City}</option>
                     {branches.map((location, index) => {
-                      return <option key={index} value={[location.BranchID, location.City, index]}>{location.City}</option>
+                      return <option key={index} value={index}>{location.City}</option>
                     })}
                   </select>
                 </Box>

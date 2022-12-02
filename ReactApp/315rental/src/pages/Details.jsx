@@ -41,6 +41,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+/*sd*/
 
 export default function Details() {
   const location = useLocation();

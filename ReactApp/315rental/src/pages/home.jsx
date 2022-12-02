@@ -103,13 +103,13 @@ const Home = () => {
   }, []);
 
   const handleChange = (event) => {
-    const content = event.target.value.split(',');
+
     if (event.target.id === "pickBranch_input_id") {
-      setPickUpBranch({ City: content[1], ID: content[0] });
+      setPickUpBranch({Data: branches[event.target.value], Index: event.target.value});
 
     }
     if (event.target.id === "dropBranch_input_id") {
-      setDropOffBranch({ City: content[1], ID: content[0] });
+      setDropOffBranch({Data: branches[event.target.value], Index: event.target.value});
     }
 
   };
@@ -150,7 +150,7 @@ const Home = () => {
                       >
                         <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Pick-Up Location ー </option>
                         {branches.map((location, index) => {
-                          return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                          return <option key={index} value={index}>{location.City}</option>
                         })}
                       </select>
                     </Box>
@@ -167,7 +167,7 @@ const Home = () => {
                       >
                         <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Drop-Off Location ー </option>
                         {branches.map((location, index) => {
-                          return <option key={index} value={[location.BranchID, location.City]}>{location.City}</option>
+                          return <option key={index} value={index}>{location.City}</option>
                         })}
                       </select>
                     </Box>
