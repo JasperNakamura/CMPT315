@@ -55,6 +55,11 @@ export default function Returns() {
   const handleMoveBranch = () => {
     setMoveBranch(!moveBranch);
   }
+
+  const [fromError,setFromError] = useState(false);
+  const handleFromError = () => {
+    setFromError(!fromError);
+  }
   
 
   //create 
@@ -167,7 +172,13 @@ export default function Returns() {
       newDateFrom = new Date(newDateFrom);
       newReturnDate = new Date(newReturnDate);
       newDateTo = new Date(newDateTo);
-     
+      
+      if (newDateFrom > newDateTo){
+        handleFromError();
+        return;
+      }
+
+
       //check if inputted return date is greater than expected return date:
       if (newDateTo < newReturnDate){
         console.log("late!");
@@ -462,6 +473,7 @@ export default function Returns() {
                 id="mileage_input_id"
                 label="Total Cost"
                 defaultValue="$0.00"
+                InputProps={{readOnly: true,}}
               />
             </Box>
             <Box>
@@ -500,6 +512,28 @@ export default function Returns() {
         >
           <AlertTitle>No date is selected!</AlertTitle>
           Please select a return date.
+        </Alert>
+      </Dialog>
+       {/*Dialog shows when bad data is clicked (fromDate > toDate)*/} 
+       <Dialog open={fromError} onClose={handleFromError}>
+        <Alert
+          severity="warning"
+          color="error"
+          
+          icon={<AccessAlarmIcon />}
+          onClose={() => {}}
+          closeText="Doesn't Work!"
+          sx={{
+            // width: '80%',
+            // margin: 'auto',
+            "& .MuiAlert-icon": {
+              color: "blue"
+            }
+            //backgroundColor: "green"
+          }}
+        >
+          <AlertTitle>Error!</AlertTitle>
+          Unable to update (Bad Data! FromDate is greater than ToDate)
         </Alert>
       </Dialog>
       {/*Dialog shows when user doesn't select anything*/} 
@@ -547,7 +581,7 @@ export default function Returns() {
       </Alert>
     </Dialog>
 
-      {/*Dialog shows when user successfully returns rental*/}
+      {/*Dialog shows when user successfully returns rental to a different branch*/}
       <Dialog open={moveBranch} onClose={handleMoveBranch}>
       <Alert
         severity="success"
