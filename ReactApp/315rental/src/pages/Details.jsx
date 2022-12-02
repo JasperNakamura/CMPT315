@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import axios from 'axios';
 import { useEffect } from "react";
+import { Link as RouterLink } from 'react-router-dom';
 
 // Changes color to a reddish color
 const theme = createTheme({
@@ -42,10 +43,6 @@ const style = {
 };
 
 export default function Details() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const location = useLocation();
   /*data passed from cars*/
   const [carDetails, setCarDetail] = useState(location.state.CarDetails)
@@ -59,6 +56,7 @@ export default function Details() {
   const dropOff = new Date(dropOffDate);
   const diffTime = Math.abs(dropOff - pickUp);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const months = (parseInt(diffDays / 30) + 1);
 
   /* API Arrays */
   const [carType, setCarType] = React.useState([]);
@@ -70,7 +68,6 @@ export default function Details() {
         + "&TypeID=" + carDetails.Type)
         .then(response => {
           setCarType(response.data);
-          console.log(carType)
         }).catch(error => {
 
         })
@@ -80,7 +77,8 @@ export default function Details() {
   }
 
   useEffect(() => {
-    getCarTypes()
+    getCarTypes();
+    getCustomers();
   }, []);
 
   /*Prices detail*/
@@ -90,7 +88,7 @@ export default function Details() {
   const [gst, setGST] = React.useState(null);
   const [pst, setPST] = React.useState(null);
   const [hst, setHST] = React.useState(null);
-  
+
   let GST = {
     Alberta: 5,
     Ontario: 0,
@@ -155,12 +153,61 @@ export default function Details() {
     return temp
   }
 
+  /* API Arrays */
+  const [customers, setCustomers] = React.useState([]);
+
+  /* Branch API */
+  const getCustomers = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/customers/?format=json`)
+      if (response.length > 0 || response.data !== undefined) {
+        setCustomers(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const [customer, setCustomer] = React.useState(null);
+
+  const handleChange = (event) => {
+    getCustomers();
+    setCustomer(prevState => ({ ...prevState, Data: customers[event.target.value], Index: event.target.value }));
+  }
+
+  const [banned, setBanned] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => {
+    if (customer !== null) {
+      setBanned(customer.Data.Banned)
+    }
+    setOpen(true)
+  };
+  const handleClose = () => {
+    setOpen(false)
+  };
+
   return (
     <Box bgcolor='#21033a'>
       {/* MUI's CSS Normalize */}
       <CssBaseline />
       {/*Header section from component*/}
       <Header />
+
+      {/*dummie customers select*/}
+      <select
+        required
+        name="branch_ad"
+        id="dropBranch_input_id"
+        onChange={handleChange}
+        defaultValue={"ー Select Pick-Up Location ー"}
+      >
+        <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Drop-Off Location ー </option>
+        {customers.map((people, index) => {
+          return <option key={index} value={index}>{people.FirstName} {people.LastName}</option>
+        })}
+      </select>
 
       {/*Box Container is MUI standard convention for styling*/}
       <Box>
@@ -205,15 +252,17 @@ export default function Details() {
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <b>Pick-up Location</b>
-                    <p><b>Phone Number: </b>{pickUpLocation.PhoneNum}</p>
-                    <p><b>Address: </b> &emsp; &emsp;&emsp;{pickUpLocation.UnitNumber}, {pickUpLocation.StreetNumber} {pickUpLocation.StreetName.toUpperCase()}</p>
-                    <p>&emsp; &emsp; &emsp; &emsp; &emsp;&emsp;&ensp;&nbsp;{pickUpLocation.City} {pickUpLocation.Province} {pickUpLocation.PostalCode}</p>
+                    <p><b>Phone Number: </b>{pickUpLocation.Data.PhoneNum}</p>
+                    <p><b>Address: </b></p>
+                    <p>{pickUpLocation.Data.UnitNumber}, {pickUpLocation.Data.StreetNumber} {pickUpLocation.Data.StreetName.toUpperCase()}</p>
+                    <p>{pickUpLocation.Data.City} {pickUpLocation.Data.Province} {pickUpLocation.Data.PostalCode}</p>
                   </Grid>
                   <Grid item xs={6}>
                     <b>Drop-off Location</b>
-                    <p><b>Phone Number: </b>{dropOffLocation.PhoneNum}</p>
-                    <p><b>Address: </b> &emsp; &emsp;&emsp;{dropOffLocation.UnitNumber}, {dropOffLocation.StreetNumber} {dropOffLocation.StreetName.toUpperCase()}</p>
-                    <p>&emsp; &emsp; &emsp; &emsp; &emsp;&emsp;&ensp;&nbsp;{dropOffLocation.City} {dropOffLocation.Province} {dropOffLocation.PostalCode}</p>
+                    <p><b>Phone Number: </b>{dropOffLocation.Data.PhoneNum}</p>
+                    <p><b>Address: </b></p>
+                    <p>{dropOffLocation.Data.UnitNumber}, {dropOffLocation.Data.StreetNumber} {dropOffLocation.Data.StreetName.toUpperCase()}</p>
+                    <p>{dropOffLocation.Data.City} {dropOffLocation.Data.Province} {dropOffLocation.Data.PostalCode}</p>
                   </Grid>
                 </Grid>
               </Card>
@@ -230,7 +279,7 @@ export default function Details() {
                 </Box>
                 <Divider sx={{ marginTop: '1em', marginBottom: '1em' }} />
                 Interested? Just add it on the next step.
-                <Button variant="contained" onClick={calculateFees} style={{ marginTop: '2em', marginLeft: '10em', paddingLeft: "2.5em", paddingRight: "2.5em" }}>Add</Button>
+                <Button variant="contained" onClick={calculateFees} style={{ marginTop: '2em', marginLeft: '8em', paddingLeft: "2.5em", paddingRight: "2em" }}>Add</Button>
                 <Button variant="contained" onClick={removeFees} style={{ marginTop: '2em', marginLeft: '1em', background: "red" }}>Remove</Button>
               </Card>
 
@@ -260,25 +309,29 @@ export default function Details() {
                 <Card style={{ padding: '2em', marginBottom: '2em' }}>
                   {
                     carType.map((data, index) => {
-                      return <Typography variant="h4" key={index}>{(data.DailyCost).toLocaleString('en-US',
+                      return <Typography variant="h5" key={index}>{(diffDays >= 30 ? data.MonthlyCost : data.DailyCost).toLocaleString('en-US',
                         {
                           style: 'currency',
                           currency: 'CAD',
-                        })} per day</Typography>
+                        })}
+                        {diffDays > 30 ? '/month(s)' : '/day(s)'}
+                        <br></br>
+                        Duration: {diffDays > 30 ? months : diffDays} {diffDays > 30 ? 'months' : 'days'}
+                      </Typography>
                     })
                   }
                   Free cancellation<br />
                   Pay at pick-up
                 </Card>
                 <Card style={{ padding: '2em', marginBottom: '2em' }}>
-                  <b>Price details ({pickUpLocation.City}, {pickUpLocation.Province})</b>
+                  <b>Price details ({pickUpLocation.Data.City}, {pickUpLocation.Data.Province})</b>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Rental Fees: </span>
                     {
                       carType.map((data) => {
                         if (normalFees === 0) {
-                          setNormalFees(diffDays * data.DailyCost)
-                          setTotalFees(diffDays * data.DailyCost)
+                          setNormalFees((diffDays > 30 ? months : diffDays) * (diffDays > 30 ? data.MonthlyCost : data.DailyCost))
+                          setTotalFees((diffDays > 30 ? months : diffDays) * (diffDays > 30 ? data.MonthlyCost : data.DailyCost))
                         }
                         return <span>{normalFees.toLocaleString('en-US',
                           {
@@ -300,86 +353,86 @@ export default function Details() {
                     <span>GST({gst}%)</span>
                     {
                       carType.map(data => {
-                        if(gst === null){
-                            setGST(GST[pickUpLocation.Province.replace(/ /g, '')]);
+                        if (gst === null) {
+                          setGST(GST[pickUpLocation.Data.Province.replace(/ /g, '')]);
                         }
-                        else{
+                        else {
                           return <span>{(calculateTax(gst, totalFees)).toLocaleString('en-US',
-                          {
-                            style: 'currency',
-                            currency: 'CAD',
-                          })}</span>
+                            {
+                              style: 'currency',
+                              currency: 'CAD',
+                            })}</span>
                         }
-                        
-                    })}
+
+                      })}
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>PST({pst}%)</span>
                     {
                       carType.map(data => {
-                        if(pst === null){
-                            setPST(PST[pickUpLocation.Province.replace(/ /g, '')]);
+                        if (pst === null) {
+                          setPST(PST[pickUpLocation.Data.Province.replace(/ /g, '')]);
                         }
-                        else{
+                        else {
                           return <span>{(calculateTax(pst, totalFees)).toLocaleString('en-US',
-                          {
-                            style: 'currency',
-                            currency: 'CAD',
-                          })}</span>
+                            {
+                              style: 'currency',
+                              currency: 'CAD',
+                            })}</span>
                         }
-                        
-                    })}
+
+                      })}
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>HST({hst}%)</span>
                     {
                       carType.map(data => {
-                        if(hst === null){
-                            setHST(HST[pickUpLocation.Province.replace(/ /g, '')]);
+                        if (hst === null) {
+                          setHST(HST[pickUpLocation.Data.Province.replace(/ /g, '')]);
                         }
-                        else{
+                        else {
                           return <span>{(calculateTax(hst, totalFees)).toLocaleString('en-US',
-                          {
-                            style: 'currency',
-                            currency: 'CAD',
-                          })}</span>
+                            {
+                              style: 'currency',
+                              currency: 'CAD',
+                            })}</span>
                         }
-                        
-                    })}
+
+                      })}
                   </Box>
                   <Divider sx={{ marginTop: '1em', marginBottom: '1em' }} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span><b>Total</b></span>
                     {
                       carType.map(data => {
-                          return <span>{(totalFees+calculateTax(gst, totalFees)+calculateTax(pst, totalFees)+calculateTax(hst, totalFees)).toLocaleString('en-US',
+                        return <span>{(totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees)).toLocaleString('en-US',
                           {
                             style: 'currency',
                             currency: 'CAD',
                           })}</span>
-                    })}
+                      })}
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Pay at pick-up</span>
                     {
                       carType.map(data => {
-                          return <span>{(totalFees+calculateTax(gst, totalFees)+calculateTax(pst, totalFees)+calculateTax(hst, totalFees)).toLocaleString('en-US',
+                        return <span>{(totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees)).toLocaleString('en-US',
                           {
                             style: 'currency',
                             currency: 'CAD',
                           })}</span>
-                    })}
+                      })}
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Pay now</span>
+                    <span>Pay now (5% off)</span>
                     {
                       carType.map(data => {
-                          return <span>{((totalFees+calculateTax(gst, totalFees)+calculateTax(pst, totalFees)+calculateTax(hst, totalFees))).toLocaleString('en-US',
+                        return <span>{((totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees)) * 0.95).toLocaleString('en-US',
                           {
                             style: 'currency',
                             currency: 'CAD',
                           })}</span>
-                    })}
+                      })}
                   </Box>
 
                   <Box display='flex' justifyContent={'center'} mt={2}>
@@ -393,10 +446,27 @@ export default function Details() {
                       >
                         <Box sx={style}>
                           <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Thank you for choosing CarGrab!
+                            {banned === null ? "Invalid Account" :
+                              (
+                                banned === true ? "You account have been banned" : "Thank you for choosing CarGrab!"
+                              )
+                            }
                           </Typography>
                           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Your rental application will be viewed shortly.
+                            <Box>
+                              {banned === null ? "Our system show that the account does not exist" :
+                                (
+                                  banned === true ? "Please visit our nearest branch for more details" : "Your rental application will be viewed shortly."
+                                )
+                              }
+                            </Box>
+                            <Box style={{float: 'right'}}>
+                              {banned === null ? <Button variant="contained" onClick={handleClose} >Close</Button> :
+                                (
+                                  banned === true ? <Button variant="contained" onClick={handleClose} >Close</Button> : <Button variant="contained" onClick={handleClose} component={RouterLink} to={"/"}>Go Home</Button >
+                                )
+                              }
+                            </Box>
                           </Typography>
                         </Box>
                       </Modal>
