@@ -10,6 +10,7 @@ import AdminHome from "./pages/admin/Home";
 import AdminRentals from "./pages/admin/Rentals";
 import AdminReturns from "./pages/admin/Returns";
 import AdminCars from "./pages/admin/Cars";
+import AdminClients from "./pages/admin/UpdateClient";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="admin/rentals" element={<AdminRentals/>}/>
         <Route path="admin/returns" element={<AdminReturns/>}/>
         <Route path="admin/cars" element={<AdminCars/>}/>
+        <Route path="admin/clients" element={<AdminClients/>}/>
       </Routes>
     </BrowserRouter>
   );
