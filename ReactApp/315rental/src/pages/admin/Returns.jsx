@@ -11,16 +11,109 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Dialog from "@mui/material/Dialog";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 
+
+
 export default function Returns() {
+   /* Get Rentals */
+   let config = {
+    headers: {
+        GoldMember: true,
+    }
+  }
+
+  //states and hooks:
+ 
+ 
+
+  const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
+  const [returnDate,setReturnDate] = useState(null);   // get return date by user input
+  const [rentals, setRentals] = useState([]);          // rentals and setRentals require re-rendering.
+  const [fromBranch, setFromBranch] = useState(null);
+  const [toBranch, setToBranch] = useState(null);
+  const [cars, setCars] = useState([]);                
+  const [cartypes, setCartypes] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [customers, setCustomers] = useState([]);
   
+  
+  const [noDate, setNoDate] = useState(false);
+  const handleNoDate = () => {
+    setNoDate(!noDate);
+  }
+
+  const [invalid,setInvalid] = useState(false);        // boolean states that are required to show alert box if user didn't select anything in datagrid
+  const handleInvalid = () => {
+    setInvalid(!invalid);
+  }
+  const [success,setSuccess] = useState(false);        // boolean states that shows alert box if user successfully sets cost and return date
+  const handleSuccess = () => {
+    setSuccess(!success);
+  }
+
+  const [moveBranch,setMoveBranch] = useState(false);
+  const handleMoveBranch = () => {
+    setMoveBranch(!moveBranch);
+  }
+  
+
+  //create 
   const handleReturnDate = (event) => {
   console.log(moment(event).format("YYYY-MM-DD"))
   setReturnDate(moment(event).format("YYYY-MM-DD"))
   }
 
 
+  //create function that writes axios HTTP request (put) to the cars model
+  const updateBranchInCars = async (event, branchID, carID, carObj) => {
+    /**
+     * parameters: 
+     * event
+     * branchID: id for branch
+     * carID: id for car
+     * carObj: object obtained after filtering matched car 
+     */
+    event.preventDefault();
+    //rentMatch=object that is obtained from rentals array by its corresponding
+    //id
+    //rentalID=key as id for rental tables
+    //begin updating the object to the back-end using axios
+    await axios.put(`http://127.0.0.1:8000/api/cars/${carID.toString()}/`, {
+      CarID: carObj.CarID,
+      Manufacturer: carObj.Manufacturer,
+      Model: carObj.Model,
+      FuelType: carObj.FuelType,
+      Colour: carObj.Colour,
+      LicensePlate: carObj.LicensePlate,
+      Status: carObj.Status,
+      Mileage: carObj.Mileage,
+      Branch: branchID,             //insert new branch if requires update
+      Type: carObj.Type
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => console.log(err));
+
+  }
 
 
+  function saveBranch(branchFrom,branchTo)
+  {
+      var branchList = [];
+      var branchFromObj = branches.find((branch) => branch.BranchID === branchFrom);
+      var branchToObj = branches.find((branch) => branch.BranchID === branchTo );
+      
+      var branchFromName = branchFromObj.StreetNumber + " " + branchFromObj.StreetName + " " + branchFromObj.City;
+      var branchToName = branchToObj.StreetNumber + " " + branchToObj.StreetName + " " + branchToObj.City;
+
+      setFromBranch(branchFromName);
+      setToBranch(branchToName);
+
+  }
+
+  
+  
 
   /*
   This function is an on click asynchronous event that appends to the rental   
@@ -97,8 +190,6 @@ export default function Returns() {
           cost += numMonths * monthlyCost;
         }
         else {
-          console.log(numWeeks);
-          console.log(weeklyCost);
           cost += numWeeks * weeklyCost;
           
         }
@@ -111,10 +202,25 @@ export default function Returns() {
       }
 
       //if branchfrom and branchto are not identical, apply branch fee
+      //update car
       if (rentMatch.BranchFrom != rentMatch.BranchTo){
-        cost += branchFee;
+        cost += branchFee;        //calculate fee
+
+        var branchTo = rentMatch.BranchTo;
+        //get branch names here (branch id as key) and store them as states:
+        
+        
+        var carID = rentMatch.Car;
+
+        var carObj = cars.find((car) => car.CarID === carID);
+
+        updateBranchInCars(event,branchTo,carID,carObj);
+        saveBranch(rentMatch.BranchFrom,branchTo);
+        handleMoveBranch();
+
       }
       
+  
 
       var totalCost = cost.toFixed(1);
 
@@ -130,13 +236,7 @@ export default function Returns() {
 
 
 
-      console.log(typeof rentalID);
-      console.log(typeof rentMatch.Customer);
-      console.log(typeof rentMatch.Employee);
-      console.log(typeof rentMatch.BranchFrom);
-      console.log(typeof rentMatch.BranchTo);
-      console.log(typeof rentMatch.Car);
-      console.log(typeof rentMatch.CarType);
+      console.log(cost);
       console.log(returnDate);
       event.preventDefault();
 
@@ -144,7 +244,7 @@ export default function Returns() {
       //id
       //rentalID=key as id for rental tables
       //begin updating the object to the back-end using axios
-      await axios.put(`https://127.0.0.1:8000/api/rentals/${rentalID.toString()}/`, {
+      await axios.put(`http://127.0.0.1:8000/api/rentals/${rentalID.toString()}/`, {
         DateFrom: rentMatch.DateFrom,
         DateTo: rentMatch.DateTo,
         DateReturned: returnDate,
@@ -202,37 +302,7 @@ export default function Returns() {
     return {id, from, to, returned, totalcost, license, gold, customer, employee, branchfrom, branchto, car, cartype};
   }
 
-  /* Get Rentals */
-  let config = {
-    headers: {
-        GoldMember: true,
-    }
-  }
-
-  //states:
-  const [noDate, setNoDate] = useState(false);
-  const [invalid,setInvalid] = useState(false);        // boolean states that are required to show alert box if user didn't select anything in datagrid
-  const [success,setSuccess] = useState(false);        // boolean states that shows alert box if user successfully sets cost and return date
-  const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
-  const [returnDate,setReturnDate] = useState(null);
-  const [rentals, setRentals] = useState([]);
-  const [cars, setCars] = useState([]);
-  const [cartypes, setCartypes] = useState([]);
-  const [branches, setBranches] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  
-  const handleNoDate = () => {
-    setNoDate(!noDate);
-  }
-
-  const handleInvalid = () => {
-    setInvalid(!invalid);
-  }
-
-  const handleSuccess = () => {
-    setSuccess(!success);
-  }
+ 
 
 
   const getRentals = async () => {
@@ -289,6 +359,8 @@ export default function Returns() {
             console.log(error);
     })  
   }
+
+
 
   useEffect(() => {
     getRentals();
@@ -381,13 +453,15 @@ export default function Returns() {
           <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
             
             <Box>
+
               <TextField
                 sx={{m: 2}}
                 required
-                number
+         
                 name="mileage_add"
                 id="mileage_input_id"
                 label="Total Cost"
+                defaultValue="$0.00"
               />
             </Box>
             <Box>
@@ -470,6 +544,29 @@ export default function Returns() {
       >
         <AlertTitle>Success!</AlertTitle>
         You've successfully returned the item.
+      </Alert>
+    </Dialog>
+
+      {/*Dialog shows when user successfully returns rental*/}
+      <Dialog open={moveBranch} onClose={handleMoveBranch}>
+      <Alert
+        severity="success"
+        
+        
+      
+        onClose={() => {}}
+        closeText="Doesn't Work!"
+        sx={{
+          // width: '80%',
+          // margin: 'auto',
+          "& .MuiAlert-icon": {
+            color: "blue"
+          }
+          //backgroundColor: "green"
+        }}
+      >
+        <AlertTitle>Success!</AlertTitle>
+        Car has been moved from {fromBranch} to {toBranch}.
       </Alert>
     </Dialog>
 
