@@ -104,6 +104,8 @@ export default function Cars () {
 
   /* Axios post location */
   const handleAdd = async (event) => {
+      if (!verifyAdd) {return}
+
       event.preventDefault();
   
       await axios.post('http://127.0.0.1:8000/api/cars/', {
@@ -121,7 +123,16 @@ export default function Cars () {
       .catch(err => console.log(err));
   }
 
+  /* NEEDS TO BE COMPLETED */
+  const verifyAdd = () => {
+    return true
+  }
+
   const handleUpdate = async (event) => {
+    if (car === "") {return}
+    if (branch === "") {return}
+    if (carType === "") {return}
+
     event.preventDefault();
 
     await axios.put(`http://127.0.0.1:8000/api/cars/${car}/`, {
@@ -143,12 +154,15 @@ export default function Cars () {
   }
 
   const handleDelete = async (event) => {
+    if (car === "") {return}
+
     event.preventDefault();
 
     await axios.delete(`http://127.0.0.1:8000/api/cars/${car}/`)
     .then(res => { 
       console.log(res)
       getCars();
+      setCar("");
       setManufacturer("");
       setModel("");
       setFuelType("");
@@ -196,6 +210,7 @@ export default function Cars () {
     setValue(newValue);
     getCars();
     
+    setCar("");
     setManufacturer("");
     setModel("");
     setFuelType("");
@@ -325,7 +340,7 @@ export default function Cars () {
                   id="branch_input_id"
                   onChange={handleChange}
                   >
-                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    <option selected value={""}> ー Select Branch Location* ー </option>
                     {branches.map((location, index) => {
                         return <option key={index} value={location.BranchID}>{location.City}</option>
                     })}
@@ -340,7 +355,7 @@ export default function Cars () {
                   id="cartype_input_id"
                   onChange={handleChange}
                   >
-                      <option disabled selected value> ー Select Car Type* ー </option>
+                      <option selected value={""}> ー Select Car Type* ー </option>
                       {carTypes.map((type, index) => {
                           return <option key={index} value={type.TypeID}>{type.Description}</option>
                       })}
@@ -371,7 +386,7 @@ export default function Cars () {
                   name="car_update"
                   id="update_car_select_id"
                   onChange={selectCar}>
-                    <option disabled selected value> ー Select Vehicle* ー </option>
+                    <option selected value={""}> ー Select Vehicle* ー </option>
                     {cars.map((vehicle, index) => {
                       return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicensePlate})</option>
                     })}
@@ -459,7 +474,7 @@ export default function Cars () {
                       onChange={handleChange}
                       value={branch}
                   >
-                    <option disabled selected value> ー Select Branch Location* ー </option>
+                    <option selected value={""}> ー Select Branch Location* ー </option>
                     {branches.map((location, index) => {
                         return <option key={index} value={location.BranchID}>{location.City}</option>
                     })}
@@ -475,7 +490,7 @@ export default function Cars () {
                       onChange={handleChange}
                       value={carType}
                   >
-                      <option disabled selected value> ー Select Car Type* ー </option>
+                      <option selected value={""}> ー Select Car Type* ー </option>
                       {carTypes.map((type, index) => {
                           return <option key={index} value={type.TypeID}>{type.Description}</option>
                       })}
@@ -506,7 +521,7 @@ export default function Cars () {
                     name="car_delete"
                     id="delete_car_select_id"
                     onChange={selectCar}>
-                      <option disabled selected value> ー Select Vehicle* ー </option>
+                      <option selected value={""}> ー Select Vehicle* ー </option>
                       {cars.map((vehicle, index) => {
                         return <option key={index} value={vehicle.CarID}>{vehicle.Colour} {vehicle.Manufacturer} {vehicle.Model} ({vehicle.LicensePlate})</option>
                       })}
@@ -601,7 +616,7 @@ export default function Cars () {
                       id="branch_select_id"
                       value={branch}
                   >
-                      <option disabled selected value> ー Select Branch Location* ー </option>
+                      <option selected value={""}> ー Select Branch Location* ー </option>
                       {branches.map((location, index) => {
                           return <option key={index} value={location.BranchID}>{location.City}</option>
                       })}
@@ -616,7 +631,7 @@ export default function Cars () {
                       id="cartype_select_id"
                       value={carType}
                   >
-                      <option disabled selected value> ー Select Car Type* ー </option>
+                      <option selected value={""}> ー Select Car Type* ー </option>
                       {carTypes.map((description, index) => {
                           return <option key={index} value={description.TypeID}>{description.Description}</option>
                       })}
