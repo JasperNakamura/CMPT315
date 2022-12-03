@@ -1,4 +1,4 @@
-import { Box, Button, Card, CssBaseline, Grid, Paper, TextField } from '@mui/material'
+import { Box, Button, Card, CssBaseline, Divider, Grid, Paper, TextField } from '@mui/material'
 import { Container } from '@mui/system'
 import { DataGrid } from '@mui/x-data-grid'
 import React, { useEffect, useState } from "react";
@@ -434,6 +434,7 @@ export default function Returns() {
         <h1 style={{color: 'white'}}>Manage Returns</h1>
         {/* Table */}
         <Box maxWidth="sx" sx={{border: '1px solid grey', borderRadius: '1em', padding: '1em', margin: '1em', backgroundColor: '#fff'}}>
+          <h2>Select a rental row</h2>
           <Paper sx={{ width: '100%', overflow: 'hidden' }}>
               <Box sx={{ height: 400, width: '100%' }}>
                   <DataGrid 
@@ -461,8 +462,8 @@ export default function Returns() {
       <Container>
         <Card sx={{padding: '2em'}}>
           <h2>Enter Return Values</h2>
-          <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
-            
+          <Divider sx={{marginBottom: '2em'}}/>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginBottom: '1em'}}>
             <Box>
 
               <TextField

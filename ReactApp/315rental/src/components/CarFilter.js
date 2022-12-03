@@ -275,7 +275,7 @@ export default function CarFilter() {
                 <Button variant="contained" sx={{backgroundColor:'#fff', color: 'black'}} fullWidth={true} onClick={handleFilter}>filter</Button>
             </div>
             <div>
-                <Button variant="contained" sx={{backgroundColor:'red', color: 'black'}} fullWidth={true} onClick={clearFilter}>Clear</Button>
+                <Button variant="contained" sx={{backgroundColor:'#fff', color: 'black'}} fullWidth={true} onClick={clearFilter}>Clear</Button>
             </div>
         </List>
     )}

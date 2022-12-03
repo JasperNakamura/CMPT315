@@ -8,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Button, CardActionArea, CssBaseline, Grid } from '@mui/material';
+import { Button, CardActionArea, CssBaseline, Divider, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import CheckIcon from '@mui/icons-material/Check';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
@@ -128,17 +128,18 @@ const Home = () => {
               <Card style={{ marginTop: '2em', marginBottom: '2em', padding: '2em' }}>
                 <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold' }} mb={1}>
                   Search Car
+                  <Divider sx={{marginBottom: '2em'}}/>
                 </Box>
-                <Grid container spacing={2} mb={4}>
-                  <Grid item xs={4}>
+                <Box sx={{display: 'flex', justifyContent: 'space-evenly'}}>
+                  <Box>
                     <DatePickup onChange={value => handlePickUpDate(value)} value={pickUpDate} />
-                  </Grid>
-                  <Grid item xs={4}>
+                  </Box>
+                  <Box>
                     <DateDropoff onChange={value => handleDropOffDate(value)} value={dropOffDate} />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={2} mb={4}>
-                  <Grid item xs={6}>
+                  </Box>
+                </Box>
+                <Box sx={{display: 'flex', justifyContent: 'space-evenly', marginBottom: '2em'}}>
+                  <Box>
                     <Box>
                       <h2>Pick-Up Location</h2>
                       <select
@@ -154,8 +155,8 @@ const Home = () => {
                         })}
                       </select>
                     </Box>
-                  </Grid>
-                  <Grid item xs={6}>
+                  </Box>
+                  <Box>
                     <Box>
                       <h2>Drop-Off Location</h2>
                       <select
@@ -171,18 +172,22 @@ const Home = () => {
                         })}
                       </select>
                     </Box>
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
 
                 <Box display='flex' justifyContent={'center'}>
                   <ThemeProvider theme={theme}>
-                    <Button variant="contained" component={RouterLink} to={"/cars"} state={{
+                    <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}}
+                      variant="contained" 
+                      component={RouterLink} 
+                      to={"/cars"} 
+                      state={{
                       /*passing data here*/
                       PickUpLocation: pickUpBranch,
                       DropOffLocation: dropOffBranch === null ? pickUpBranch : dropOffBranch,
                       PickUpDate: pickUpDate,
                       DropOffDate: dropOffDate
-                    }}>Search</Button>
+                      }}>Search</Button>
                   </ThemeProvider>
                 </Box>
               </Card>

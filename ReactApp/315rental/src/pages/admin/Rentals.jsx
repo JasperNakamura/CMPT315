@@ -218,11 +218,12 @@ export default function Rentals() {
         <h1 style={{color: 'white'}}>Manage Rentals</h1>
         {/* Table */}
         <Box maxWidth="sx" sx={{border: '1px solid grey', borderRadius: '1em', padding: '1em', margin: '1em', backgroundColor: '#fff'}}>
-          <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-              <Box sx={{ height: 400, width: '100%' }}>
-                  <DataGrid rows={rows} columns={columns} onRowClick={(rowData)=> onSelect(rowData.row)}/>
-              </Box>
-          </Paper>
+            <h2>Select a rental row</h2>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <Box sx={{ height: 400, width: '100%' }}>
+                    <DataGrid rows={rows} columns={columns} onRowClick={(rowData)=> onSelect(rowData.row)}/>
+                </Box>
+            </Paper>
         </Box>
       </Container>
 
