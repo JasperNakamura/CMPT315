@@ -163,42 +163,50 @@ export default function Rentals() {
 
   /* Update with Employee ID  */
   /* HANDLES ROW SELECT. WHEN ROW SELECTED FILL INFO BELOW */
-  const [rentalInfo, setRentalInfo] = React.useState("");
+  const [rentalInfo, setRentalInfo] = React.useState(""); //from table
+  const [rental, setRental] = React.useState(""); //from db
 
   function onSelect(rentalInfo) {
     if (rentalInfo != null) {
       setRentalInfo(rentalInfo);
+      let rental = rentals.find((rent) => rent.RentalID === rentalInfo.id);
+      setRental(rental);
     }
   }
 
   const [employeeID, setEmployeeID] = React.useState("");
 
   const rentalEmployee = async (event) => {
+    if (employeeID === "") {return}
+
     event.preventDefault();
     
-    await axios.put(`http://127.0.0.1:8000/api/rentals/${rentalInfo.id}`, {
-      DateFrom: "2022-10-23", 
-      DateTo: "2022-10-29",
+    await axios.put(`http://127.0.0.1:8000/api/rentals/${rentalInfo.id}/`, {
+      DateFrom: rental.DateFrom, 
+      DateTo: rental.DateTo,
       DateReturned: null,
-      TotalCost: '65.0',
-      LicensePlate: "HKV-5937",
-      GoldMember: true,
-      Customer: '2',
-      Employee: '2',
-      BranchFrom: '1', 
-      BranchTo: 1,
-      Car: 3,
-      CarType: 2,
+      TotalCost: null,
+      LicensePlate: rental.LicensePlate,
+      GoldMember: rental.GoldMember,
+      Customer: rental.Customer,
+      Employee: parseInt(employeeID),
+      BranchFrom: rental.BranchFrom, 
+      BranchTo: rental.BranchTo,
+      Car: rental.Car,
+      CarType: rental.CarType,
     })
     .then(res => {
       console.log(res);
     }) 
     .catch(err => console.log(err));
+
+    getRentals();
   }
 
   const handleChange = (event) => {
     if (event.target.id === "set_employee_input_id") {
       setEmployeeID(event.target.value);
+      console.log(employeeID);
     }
   }
 
@@ -229,7 +237,7 @@ export default function Rentals() {
                   id="set_employee_input_id"
                   onChange={handleChange}
               >
-                <option disabled selected value> ー Select Employee* ー </option>
+                <option selected value={""}> ー Select Employee* ー </option>
                 {employees.map((name, index) => {
                     return <option key={index} value={name.ID}>{name.FirstName} {name.LastName}</option>
                 })}
