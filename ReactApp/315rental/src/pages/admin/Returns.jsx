@@ -23,8 +23,8 @@ export default function Returns() {
 
   //states and hooks:
  
- 
-
+  const [feeBranch, setFeeBranch] = useState(0);
+  const [totCost, setTotCost] = useState(0);
   const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
   const [returnDate,setReturnDate] = useState(null);   // get return date by user input
   const [rentals, setRentals] = useState([]);          // rentals and setRentals require re-rendering.
@@ -64,8 +64,10 @@ export default function Returns() {
 
   //create 
   const handleReturnDate = (event) => {
-  console.log(moment(event).format("YYYY-MM-DD"))
+  
   setReturnDate(moment(event).format("YYYY-MM-DD"))
+  calcTotal();
+  
   }
 
 
@@ -117,7 +119,97 @@ export default function Returns() {
 
   }
 
+  //create function that calculates the cost:
+  /**
+   * @states
+   * 
+   * 
+   * @returns 
+   */
+  function calcTotal(){
+    //var dateToReturn = DateReturn.value;
+    var isLate = false;
+    const DAY_IN_WEEK = 7;
+    const WEEK_IN_MONTH = 4;
+    const DAY = 1000 * 60 * 60 * 24;
+    //initialize cost
+    var cost = 0.0;
+
   
+    var carType = selectedRow[0].carType;
+    //find matching car type here:
+    var match = cartypes.find((type) => type.CarType === carType);
+    //get daily cost, weekly cost, monthly cost here:
+    var dailyCost = parseFloat(match.DailyCost);
+    var weeklyCost = parseFloat(match.WeeklyCost);
+    var monthlyCost = parseFloat(match.MonthlyCost);
+    var lateFee = parseFloat(match.LateFee);
+    var branchFee = parseFloat(match.BranchFee);
+
+    //get expected return date
+    var dateTo = selectedRow[0].to;
+    var dateFrom = selectedRow[0].from;
+    //parse dates appropriately to begin calculating date differences
+    var newDateFrom = dateFrom.split('-').join('/');
+    var newReturnDate = returnDate.split('-').join('/');
+    var newDateTo = dateTo.split('-').join('/');
+
+    //set branch fee here (if applicable)
+    setFeeBranch(branchFee);
+  
+    newDateFrom = new Date(newDateFrom);
+    newReturnDate = new Date(newReturnDate);
+    newDateTo = new Date(newDateTo);
+    
+    if (newDateFrom > newDateTo){
+      handleFromError();
+      return;
+    }
+
+
+    //check if inputted return date is greater than expected return date:
+    if (newDateTo < newReturnDate){
+      console.log("late!");
+      isLate = true;
+    }
+
+    //calculate first the difference between days from dateTo to dateFrom
+    var diffDays = Math.round((newDateTo - newDateFrom) / DAY);
+
+    //check if diffDays is less than 7; if it is, then calculate daily costs:
+    if (diffDays <= DAY_IN_WEEK){
+      cost += diffDays * dailyCost;
+    }
+    else{
+      var numWeeks = Math.floor(diffDays/DAY_IN_WEEK);
+      console.log(numWeeks);
+      //if number of weeks is greater than weeks in a month, calculate monthly costs
+      if (numWeeks > WEEK_IN_MONTH){
+        var numMonths = Math.floor(numWeeks/DAY_IN_WEEK);
+        cost += numMonths * monthlyCost;
+      }
+      else {
+        cost += numWeeks * weeklyCost;
+        
+      }
+    }
+    
+    
+    //check if returned car is late:
+    if (isLate){
+      cost += lateFee;
+    }
+
+    var totalCost = cost.toFixed(1);
+
+    //get element of textbox where total cost is located:
+    const elem = document.getElementById('mileage_input_id');
+    elem.value = currencyFormat(cost);
+
+
+
+    setTotCost(cost);
+  }
   
 
   /*
@@ -142,80 +234,15 @@ export default function Returns() {
      */
 
     else {
-      //var dateToReturn = DateReturn.value;
-      var isLate = false;
-      const DAY_IN_WEEK = 7;
-      const WEEK_IN_MONTH = 4;
-      const DAY = 1000 * 60 * 60 * 24;
-      //initialize cost
-      var cost = 0.0;
-
       var rentalID = selectedRow[0].id;
-      var carType = selectedRow[0].carType;
-      //find matching car type here:
-      var match = cartypes.find((type) => type.CarType === carType);
-      //get daily cost, weekly cost, monthly cost here:
-      var dailyCost = parseFloat(match.DailyCost);
-      var weeklyCost = parseFloat(match.WeeklyCost);
-      var monthlyCost = parseFloat(match.MonthlyCost);
-      var lateFee = parseFloat(match.LateFee);
-      var branchFee = parseFloat(match.BranchFee);
-
-      //get expected return date
-      var dateTo = selectedRow[0].to;
-      var dateFrom = selectedRow[0].from;
-      //parse dates appropriately to begin calculating date differences
-      var newDateFrom = dateFrom.split('-').join('/');
-      var newReturnDate = returnDate.split('-').join('/');
-      var newDateTo = dateTo.split('-').join('/');
-    
-      newDateFrom = new Date(newDateFrom);
-      newReturnDate = new Date(newReturnDate);
-      newDateTo = new Date(newDateTo);
-      
-      if (newDateFrom > newDateTo){
-        handleFromError();
-        return;
-      }
-
-
-      //check if inputted return date is greater than expected return date:
-      if (newDateTo < newReturnDate){
-        console.log("late!");
-        isLate = true;
-      }
-
-      //calculate first the difference between days from dateTo to dateFrom
-      var diffDays = Math.round((newDateTo - newDateFrom) / DAY);
-
-      //check if diffDays is less than 7; if it is, then calculate daily costs:
-      if (diffDays <= DAY_IN_WEEK){
-        cost += diffDays * dailyCost;
-      }
-      else{
-        var numWeeks = Math.floor(diffDays/DAY_IN_WEEK);
-        console.log(numWeeks);
-        //if number of weeks is greater than weeks in a month, calculate monthly costs
-        if (numWeeks > WEEK_IN_MONTH){
-          var numMonths = Math.floor(numWeeks/DAY_IN_WEEK);
-          cost += numMonths * monthlyCost;
-        }
-        else {
-          cost += numWeeks * weeklyCost;
-          
-        }
-      }
       var rentMatch = rentals.find((rent) => rent.RentalID === rentalID);
-      
-      //check if returned car is late:
-      if (isLate){
-        cost += lateFee;
-      }
 
       //if branchfrom and branchto are not identical, apply branch fee
       //update car
       if (rentMatch.BranchFrom != rentMatch.BranchTo){
-        cost += branchFee;        //calculate fee
+        totCost += feeBranch;        //calculate fee
+
+        setTotCost(totCost);
 
         var branchTo = rentMatch.BranchTo;
         //get branch names here (branch id as key) and store them as states:
@@ -233,22 +260,22 @@ export default function Returns() {
       
   
 
-      var totalCost = cost.toFixed(1);
+      // var totalCost = cost.toFixed(1);
 
       
 
       handleSuccess();
 
-      //get element of textbox where total cost is located:
-      const elem = document.getElementById('mileage_input_id');
-      elem.value = currencyFormat(cost);
+      // //get element of textbox where total cost is located:
+      // const elem = document.getElementById('mileage_input_id');
+      // elem.value = currencyFormat(cost);
 
       
 
 
 
-      console.log(cost);
-      console.log(returnDate);
+      // console.log(cost);
+      // console.log(returnDate);
       event.preventDefault();
 
       //rentMatch=object that is obtained from rentals array by its corresponding
@@ -259,7 +286,7 @@ export default function Returns() {
         DateFrom: rentMatch.DateFrom,
         DateTo: rentMatch.DateTo,
         DateReturned: returnDate,
-        TotalCost: totalCost.toString(),
+        TotalCost: totCost.toString(),
         LicensePlate: rentMatch.LicensePlate,
         GoldMember: rentMatch.GoldMember,
         Customer: rentMatch.Customer.toString(),
