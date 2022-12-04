@@ -22,9 +22,12 @@ export default function Returns() {
   }
 
   //states and hooks:
- 
+  
+  const [disableDate,setDisableDate] = useState(true)
+  const [minDate, setMinDate] = useState(null);
   const [totCost, setTotCost] = useState(0);
   const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
+  const [outputDate, setOutputDate] = useState(null);
   const [returnDate,setReturnDate] = useState(null);   // get return date by user input
   const [rentals, setRentals] = useState([]);          // rentals and setRentals require re-rendering.
   const [fromBranch, setFromBranch] = useState(null);
@@ -63,7 +66,8 @@ export default function Returns() {
   //create 
   const handleReturnDate = (event) => {
   
-  setReturnDate(moment(event).format("YYYY-MM-DD"))
+  setReturnDate(moment(event).format("YYYY-MM-DD"));
+  setOutputDate(moment(event).format("YYYY-MM-DD"));
   
   }
 
@@ -71,7 +75,7 @@ export default function Returns() {
   //If both values are valid then calcTotal and display
   useEffect(() => {
     if(returnDate !== null && selectedRow !== null){ calcTotal(); }
-
+   
   }, [returnDate, selectedRow]);
 
   //Gets Filtered Data from rentals to be used for identifying if a client should be upgraded to gold member status
@@ -294,6 +298,8 @@ export default function Returns() {
     if (cost < 0){
       cost = 0.0;
     }
+
+    
 
 
     console.log(cost);
@@ -575,11 +581,31 @@ export default function Returns() {
                   /*Once user selects a row in DataGrid, save the row to an array*/
 
                   onSelectionModelChange={(item) => {
-                    
-                      const selectedItem = new Set(item);
                       
-                      const selectedItemData = rows.filter((row) => selectedItem.has(row.id));
-                      setSelectedRow(selectedItemData);
+                      //if item is empty, then disable DatePicker
+                      if (item.length === 0){
+  
+                        setDisableDate(true);
+
+                      }
+                      else{
+                        setDisableDate(false);
+                        const selectedItem = new Set(item);
+                        console.log(selectedItem);
+                        
+                        const selectedItemData = rows.filter((row) => selectedItem.has(row.id));
+                        var min = selectedItemData[0].from;
+
+                        //begin creating Date object for the minimum date which is needed to disable dates that are less than the minDate
+                        min = min.split('-').join('/');
+                        min = new Date(min);
+
+                        setMinDate(min);
+                        setSelectedRow(selectedItemData);
+                          
+                      }
+                      
+
                       
                       
                   }}
@@ -609,7 +635,7 @@ export default function Returns() {
               />
             </Box>
             <Box>
-              <DateReturn onChange={value => handleReturnDate(value)} value={returnDate}/>
+              <DateReturn onChange={value => handleReturnDate(value)} value={returnDate} minDate={minDate} disabled={disableDate}/>
             </Box>
           </Box>
           <Grid container spacing={0} justifyContent="center">
@@ -709,7 +735,7 @@ export default function Returns() {
         }}
       >
         <AlertTitle>Success!</AlertTitle>
-        You've successfully returned the item.
+        You've successfully returned the car at {outputDate}. Total is {currencyFormat(totCost)}.
       </Alert>
     </Dialog>
 

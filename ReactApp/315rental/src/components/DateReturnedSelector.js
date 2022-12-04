@@ -19,6 +19,8 @@ export default function MaterialUIPickers(props) {
           label="Date-Returned"
           inputFormat="MM/DD/YYYY"
           disablePast
+          minDate={props.minDate}
+          disabled={props.disabled}
           value={value}
           onChange={handleChange}
           renderInput={(params) => <TextField {...params} />}
