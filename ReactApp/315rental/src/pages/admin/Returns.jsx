@@ -199,6 +199,12 @@ export default function Returns() {
 
   }
 
+  //function that returns the max days inputting the DateFrom's month & year:
+  function getMaxDaysMonth(month, year)
+  {
+    return new Date(year, month, 0).getDate();
+  }
+
   //create function that calculates the cost:
   /**
    * @states
@@ -244,7 +250,7 @@ export default function Returns() {
     newDateFrom = new Date(newDateFrom);
     newReturnDate = new Date(newReturnDate);
     newDateTo = new Date(newDateTo);
-    
+    var maxDays = getMaxDaysMonth(newDateFrom.getMonth(), newDateFrom.getYear());
     if (newDateFrom > newDateTo){
       handleFromError();
       return;
@@ -258,31 +264,41 @@ export default function Returns() {
     }
 
     //calculate first the difference between days from dateTo to dateFrom
-    var diffDays = Math.round((newDateTo - newDateFrom) / DAY);
+    var diffDays = Math.round((newReturnDate - newDateFrom) / DAY);
 
-    //check if diffDays is less than 7; if it is, then calculate daily costs:
-    if (diffDays <= DAY_IN_WEEK){
-      cost += diffDays * dailyCost;
+
+    /**
+     * Begin calculations here:
+     * 1. calculate the difference in months: days / maximum month
+     * 2. calculate the difference in weeks: days / 7 
+     * 3. calculate difference in days: days % 7
+     * 4. check if returned car is late: find difference between:
+     *        returned date - expected return date
+     * 
+     * */ 
+    var monthFactor = Math.floor(diffDays/maxDays);
+    var weekFactor = Math.floor(diffDays/DAY_IN_WEEK);
+    var dayFactor = diffDays % DAY_IN_WEEK;
+    var lateFactor = 0;
+
+    console.log(monthFactor + " " + weekFactor + " " + dayFactor);  
+
+    if (isLate)
+    {
+      lateFactor = Math.round((newReturnDate - newDateTo) / DAY);
     }
-    else{
-      var numWeeks = Math.floor(diffDays/DAY_IN_WEEK);
-      console.log(numWeeks);
-      //if number of weeks is greater than weeks in a month, calculate monthly costs
-      if (numWeeks > WEEK_IN_MONTH){
-        var numMonths = Math.floor(numWeeks/DAY_IN_WEEK);
-        cost += numMonths * monthlyCost;
-      }
-      else {
-        cost += numWeeks * weeklyCost;
-        
-      }
+
+    cost += (monthFactor*monthlyCost) + (weekFactor*weeklyCost) + (dayFactor*dailyCost) + (lateFactor*lateFee);
+
+
+    if (cost < 0){
+      cost = 0.0;
     }
+
+
+    console.log(cost);
+
     
-    
-    //check if returned car is late:
-    if (isLate){
-      cost += lateFee;
-    }
 
     var totalCost = cost.toFixed(1);
 
