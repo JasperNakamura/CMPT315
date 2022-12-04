@@ -5,6 +5,7 @@ from .models import *
 from datetime import datetime
 from django_filters import rest_framework as filters
 from django.db.models import Q
+from django.db.models import Count
 
 # Create your views here.
 class AvailableCarFilterSet(filters.FilterSet):
@@ -101,6 +102,13 @@ class CustomerView(viewsets.ModelViewSet):
     filterset_class = CustomerInfoFilter
 
 class RentalsFilter(filters.FilterSet):
+    qualifyGold = filters.CharFilter(method="get_GoldInfo")
+
+    def get_GoldInfo(self, queryset, fieldname, value):
+        if value:
+            return queryset.filter(Customer=value).filter(DateReturned__year=datetime.now().year)
+        return queryset
+
     class Meta:
         model = Rental
         fields = ('RentalID', 'DateFrom', 'DateTo', 'DateReturned', 'TotalCost', 'LicensePlate', 'GoldMember', 'Customer', 'Employee', 'BranchFrom', 'BranchTo', 'Car', 'CarType')

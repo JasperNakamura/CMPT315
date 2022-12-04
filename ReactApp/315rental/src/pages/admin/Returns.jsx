@@ -23,7 +23,6 @@ export default function Returns() {
 
   //states and hooks:
  
-  const [feeBranch, setFeeBranch] = useState(0);
   const [totCost, setTotCost] = useState(0);
   const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
   const [returnDate,setReturnDate] = useState(null);   // get return date by user input
@@ -34,8 +33,7 @@ export default function Returns() {
   const [cartypes, setCartypes] = useState([]);
   const [branches, setBranches] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  
+  const [customers, setCustomers] = useState([]);  
   
   const [noDate, setNoDate] = useState(false);
   const handleNoDate = () => {
@@ -66,10 +64,92 @@ export default function Returns() {
   const handleReturnDate = (event) => {
   
   setReturnDate(moment(event).format("YYYY-MM-DD"))
-  calcTotal();
   
   }
 
+  //Any change to values in either returnDate or selectedRow call this function to run
+  //If both values are valid then calcTotal and display
+  useEffect(() => {
+    if(returnDate !== null && selectedRow !== null){ calcTotal(); }
+
+  }, [returnDate, selectedRow]);
+
+  //Gets Filtered Data from rentals to be used for identifying if a client should be upgraded to gold member status
+  const getQualifyGoldData = async (event, customer) => {
+
+    event.preventDefault();
+
+    await axios.get(`http://127.0.0.1:8000/api/rentals/?format=json&qualifyGold=${customer.ID}`)
+    .then(response => {
+      console.log(response.data)
+      updateGold(event, response.data, customer)    //Send in data to be processed and update staus if applicable
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }
+
+  //Uses buissness rules to determine if customer should be upgraded to gold member
+  //If true, axios.put is run to update customer status
+  const updateGold = async(event, data, customerObj) => {
+    event.preventDefault();
+
+    var value = 0;
+    var count = 0;
+    for(let index in data){
+      value += data[index].TotalCost;
+      count += 1;
+    }
+    if(value >= 1 && count >= 3){
+      await axios.put(`http://127.0.0.1:8000/api/customers/${customerObj.ID}/`, {
+      FirstName: customerObj.FirstName,
+      LastName: customerObj.LastName,
+      DriversLicense: customerObj.DriversLicense,
+      Email: customerObj.Email,
+      PhoneNum: customerObj.PhoneNum,
+      DOB: customerObj.DOB,
+      GoldMember: true,
+      Province: customerObj.Province,
+      City: customerObj.City,
+      PostalCode: customerObj.PostalCode,
+      StreetNumber: customerObj.StreetNumber,
+      StreetName: customerObj.StreetName,
+      UnitNumber: customerObj.UnitNumber,
+      Banned: customerObj.Banned
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => console.log(err));
+    }
+  }
+
+  //create function that writes axios HTTP request (put) to the customers model
+  const banCustomer = async (event, customerObj) => {
+
+    event.preventDefault();
+
+    await axios.put(`http://127.0.0.1:8000/api/customers/${customerObj.ID}/`, {
+      FirstName: customerObj.FirstName,
+      LastName: customerObj.LastName,
+      DriversLicense: customerObj.DriversLicense,
+      Email: customerObj.Email,
+      PhoneNum: customerObj.PhoneNum,
+      DOB: customerObj.DOB,
+      GoldMember: customerObj.GoldMember,
+      Province: customerObj.Province,
+      City: customerObj.City,
+      PostalCode: customerObj.PostalCode,
+      StreetNumber: customerObj.StreetNumber,
+      StreetName: customerObj.StreetName,
+      UnitNumber: customerObj.UnitNumber,
+      Banned: true
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => console.log(err));
+  }
 
   //create function that writes axios HTTP request (put) to the cars model
   const updateBranchInCars = async (event, branchID, carID, carObj) => {
@@ -135,16 +215,15 @@ export default function Returns() {
     //initialize cost
     var cost = 0.0;
 
-  
-    var carType = selectedRow[0].carType;
+    var carType = selectedRow[0].cartype;
     //find matching car type here:
-    var match = cartypes.find((type) => type.CarType === carType);
+    var match = cartypes.find((type) => type.Description === carType);
     //get daily cost, weekly cost, monthly cost here:
     var dailyCost = parseFloat(match.DailyCost);
     var weeklyCost = parseFloat(match.WeeklyCost);
     var monthlyCost = parseFloat(match.MonthlyCost);
     var lateFee = parseFloat(match.LateFee);
-    var branchFee = parseFloat(match.BranchFee);
+    var branchFee = parseFloat(match.DiffBranchFee);
 
     //get expected return date
     var dateTo = selectedRow[0].to;
@@ -155,7 +234,12 @@ export default function Returns() {
     var newDateTo = dateTo.split('-').join('/');
 
     //set branch fee here (if applicable)
-    setFeeBranch(branchFee);
+    if(selectedRow[0].branchfrom != selectedRow[0].branchto){
+      if(!(selectedRow[0].gold)){
+        console.log("Diff Branch!")
+        cost += branchFee
+      }
+    }
   
     newDateFrom = new Date(newDateFrom);
     newReturnDate = new Date(newReturnDate);
@@ -240,10 +324,6 @@ export default function Returns() {
       //if branchfrom and branchto are not identical, apply branch fee
       //update car
       if (rentMatch.BranchFrom != rentMatch.BranchTo){
-        totCost += feeBranch;        //calculate fee
-
-        setTotCost(totCost);
-
         var branchTo = rentMatch.BranchTo;
         //get branch names here (branch id as key) and store them as states:
         
@@ -259,8 +339,14 @@ export default function Returns() {
       }
       
   
-
-      // var totalCost = cost.toFixed(1);
+      var customerName = selectedRow[0].customer.split(" ")
+      var customerMatch = customers.find((customer) => customer.FirstName === customerName[0] && customer.LastName === customerName[1])
+      
+      //If Customer returned 15+ after expected ban them
+      if(moment(rentMatch.DateTo).add(15, 'd').format("YYYY-MM-DD") <= returnDate){
+        banCustomer(event, customerMatch);
+        customerMatch.Banned = true
+      }
 
       
 
@@ -269,9 +355,6 @@ export default function Returns() {
       // //get element of textbox where total cost is located:
       // const elem = document.getElementById('mileage_input_id');
       // elem.value = currencyFormat(cost);
-
-      
-
 
 
       // console.log(cost);
@@ -301,9 +384,14 @@ export default function Returns() {
       })
       .catch(err => console.log(err));
 
-    }
-    
+      getQualifyGoldData(event, customerMatch);
 
+      //Reset states and get new data to reload the table.
+      getRentals();
+      setSelectedRow(null);
+      setReturnDate(null);
+
+    }    
   }
 
 
