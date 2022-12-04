@@ -22,9 +22,12 @@ export default function Returns() {
   }
 
   //states and hooks:
- 
+  
+  const [disableDate,setDisableDate] = useState(true)
+  const [minDate, setMinDate] = useState(null);
   const [totCost, setTotCost] = useState(0);
   const [selectedRow,setSelectedRow] = useState(null); // grab the rental row's information to be processed
+  const [outputDate, setOutputDate] = useState(null);
   const [returnDate,setReturnDate] = useState(null);   // get return date by user input
   const [rentals, setRentals] = useState([]);          // rentals and setRentals require re-rendering.
   const [fromBranch, setFromBranch] = useState(null);
@@ -63,7 +66,8 @@ export default function Returns() {
   //create 
   const handleReturnDate = (event) => {
   
-  setReturnDate(moment(event).format("YYYY-MM-DD"))
+  setReturnDate(moment(event).format("YYYY-MM-DD"));
+  setOutputDate(moment(event).format("YYYY-MM-DD"));
   
   }
 
@@ -71,7 +75,7 @@ export default function Returns() {
   //If both values are valid then calcTotal and display
   useEffect(() => {
     if(returnDate !== null && selectedRow !== null){ calcTotal(); }
-
+   
   }, [returnDate, selectedRow]);
 
   //Gets Filtered Data from rentals to be used for identifying if a client should be upgraded to gold member status
@@ -199,6 +203,12 @@ export default function Returns() {
 
   }
 
+  //function that returns the max days inputting the DateFrom's month & year:
+  function getMaxDaysMonth(month, year)
+  {
+    return new Date(year, month, 0).getDate();
+  }
+
   //create function that calculates the cost:
   /**
    * @states
@@ -244,7 +254,7 @@ export default function Returns() {
     newDateFrom = new Date(newDateFrom);
     newReturnDate = new Date(newReturnDate);
     newDateTo = new Date(newDateTo);
-    
+    var maxDays = getMaxDaysMonth(newDateFrom.getMonth(), newDateFrom.getYear());
     if (newDateFrom > newDateTo){
       handleFromError();
       return;
@@ -258,31 +268,43 @@ export default function Returns() {
     }
 
     //calculate first the difference between days from dateTo to dateFrom
-    var diffDays = Math.round((newDateTo - newDateFrom) / DAY);
+    var diffDays = Math.round((newReturnDate - newDateFrom) / DAY);
 
-    //check if diffDays is less than 7; if it is, then calculate daily costs:
-    if (diffDays <= DAY_IN_WEEK){
-      cost += diffDays * dailyCost;
+
+    /**
+     * Begin calculations here:
+     * 1. calculate the difference in months: days / maximum month
+     * 2. calculate the difference in weeks: days / 7 
+     * 3. calculate difference in days: days % 7
+     * 4. check if returned car is late: find difference between:
+     *        returned date - expected return date
+     * 
+     * */ 
+    var monthFactor = Math.floor(diffDays/maxDays);
+    var weekFactor = Math.floor(diffDays/DAY_IN_WEEK);
+    var dayFactor = diffDays % DAY_IN_WEEK;
+    var lateFactor = 0;
+
+    console.log(monthFactor + " " + weekFactor + " " + dayFactor);  
+
+    if (isLate)
+    {
+      lateFactor = Math.round((newReturnDate - newDateTo) / DAY);
     }
-    else{
-      var numWeeks = Math.floor(diffDays/DAY_IN_WEEK);
-      console.log(numWeeks);
-      //if number of weeks is greater than weeks in a month, calculate monthly costs
-      if (numWeeks > WEEK_IN_MONTH){
-        var numMonths = Math.floor(numWeeks/DAY_IN_WEEK);
-        cost += numMonths * monthlyCost;
-      }
-      else {
-        cost += numWeeks * weeklyCost;
-        
-      }
+
+    cost += (monthFactor*monthlyCost) + (weekFactor*weeklyCost) + (dayFactor*dailyCost) + (lateFactor*lateFee);
+
+
+    if (cost < 0){
+      cost = 0.0;
     }
+
     
+
+
+    console.log(cost);
+
     
-    //check if returned car is late:
-    if (isLate){
-      cost += lateFee;
-    }
 
     var totalCost = cost.toFixed(1);
 
@@ -559,11 +581,31 @@ export default function Returns() {
                   /*Once user selects a row in DataGrid, save the row to an array*/
 
                   onSelectionModelChange={(item) => {
-                    
-                      const selectedItem = new Set(item);
                       
-                      const selectedItemData = rows.filter((row) => selectedItem.has(row.id));
-                      setSelectedRow(selectedItemData);
+                      //if item is empty, then disable DatePicker
+                      if (item.length === 0){
+  
+                        setDisableDate(true);
+
+                      }
+                      else{
+                        setDisableDate(false);
+                        const selectedItem = new Set(item);
+                        console.log(selectedItem);
+                        
+                        const selectedItemData = rows.filter((row) => selectedItem.has(row.id));
+                        var min = selectedItemData[0].from;
+
+                        //begin creating Date object for the minimum date which is needed to disable dates that are less than the minDate
+                        min = min.split('-').join('/');
+                        min = new Date(min);
+
+                        setMinDate(min);
+                        setSelectedRow(selectedItemData);
+                          
+                      }
+                      
+
                       
                       
                   }}
@@ -593,7 +635,7 @@ export default function Returns() {
               />
             </Box>
             <Box>
-              <DateReturn onChange={value => handleReturnDate(value)} value={returnDate}/>
+              <DateReturn onChange={value => handleReturnDate(value)} value={returnDate} minDate={minDate} disabled={disableDate}/>
             </Box>
           </Box>
           <Grid container spacing={0} justifyContent="center">
@@ -693,7 +735,7 @@ export default function Returns() {
         }}
       >
         <AlertTitle>Success!</AlertTitle>
-        You've successfully returned the item.
+        You've successfully returned the car at {outputDate}. Total is {currencyFormat(totCost)}.
       </Alert>
     </Dialog>
 
