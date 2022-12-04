@@ -189,12 +189,8 @@ export default function Details() {
     setOpen(false)
   };
 
-  console.log(carType)
-
   const handleSubmit = async (event) => {
-
-    event.preventDefault();
-
+    
     const total = totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees);
 
     await axios.post('http://127.0.0.1:8000/api/rentals/', {
@@ -213,6 +209,7 @@ export default function Details() {
     })
     .then(res => console.log(res)) 
     .catch(err => console.log(err));
+    setOpen(false)
 }
 
   return (
@@ -478,7 +475,7 @@ export default function Details() {
                             <Box style={{float: 'right'}}>
                               {banned === null ? <Button variant="contained" onClick={handleClose} >Close</Button> :
                                 (
-                                  banned === true ? <Button variant="contained" onClick={handleClose} >Close</Button> :  <Button variant="contained" onClick={handleSubmit} component={RouterLink} to={"/cars"}>Go Home</Button >                                  
+                                  banned === true ? <Button variant="contained" onClick={handleClose} >Close</Button> :  <Button variant="contained" onClick={handleSubmit} >Close</Button >                                  
                                 )
                               }
                             </Box>
