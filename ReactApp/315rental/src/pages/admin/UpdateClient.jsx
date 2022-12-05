@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
+import { Box, Button, Card, CssBaseline, FormControlLabel, Grid, Switch, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import Header from "../../components/AdminHeader"
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -24,6 +24,7 @@ export default function UpdateClient() {
     const [streetName, setStreetName] = React.useState('');
     const [unitNumber, setUnitNumber] = React.useState('');
     const [goldMember, setGoldMember] = React.useState(false);
+    const [banned, setBanned] = React.useState(false);
 
     const handleChange = (event) => {
         if (event.target !== undefined) {
@@ -63,6 +64,9 @@ export default function UpdateClient() {
             if (event.target.id === "goldMember_id") {
                 setGoldMember(event.target.checked);
             }
+            if (event.target.id === "banned_id") {
+                setBanned(event.target.checked);
+            }
         }
         
         else {
@@ -73,19 +77,20 @@ export default function UpdateClient() {
 
     const [allUser, setAllUser] = useState([{value: '', FirstName: '--Choose an option--', disabled: true}]);
 
+    const getCustomers = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8000/api/customers/`)
+          if (response.length > 0 || response.data !== undefined) {
+            setAllUser(response.data)
+          }
+        } catch (error) {
+            console.log(error);
+      }  
+    }
+
     useEffect(() => {
-        async function fetchData() {
-            await axios.get('http://localhost:8000/api/customers/')
-                .then(res => setAllUser(res.data))
-                .catch(err => console.log(err))
-        }
-        fetchData();
-
+        getCustomers();
     }, []);
-
-    function refreshPage() {
-        window.location.reload(false);
-      }
 
     const handleSubmit = async (event) => {
         let dobString = DOB === null ? null : DOB;
@@ -103,6 +108,7 @@ export default function UpdateClient() {
         const streetNameValue = streetName === null ? null : streetName;
         const unitValue = unitNumber === null ? null : unitNumber;
         const goldMemberValue = goldMember === null ? null : goldMember;
+        const bannedValue = banned === null ? null : banned;
 
         axios.put('http://127.0.0.1:8000/api/customers/' + ID+'/', {
             City: cityValue,
@@ -117,10 +123,11 @@ export default function UpdateClient() {
             Province: provinceValue,
             StreetName: streetNameValue,
             StreetNumber: streetNumberValue,
-            UnitNumber: unitValue
+            UnitNumber: unitValue,
+            Banned: bannedValue,
         }).then(res => {
             if(res.status === 200){
-                refreshPage()
+                getCustomers()
             }
         })
     }
@@ -143,148 +150,152 @@ export default function UpdateClient() {
         setStreetName(allUser[event.target.value].StreetName);
         setUnitNumber(allUser[event.target.value].UnitNumber);
         setGoldMember(allUser[event.target.value].GoldMember);
+        setBanned(allUser[event.target.value].Banned);
     }
 
     return (
-        <div>
+        <Box sx={{backgroundColor: '#21033a', minHeight: '100vh'}}>
+            <CssBaseline/>
             <Header />
             <Container>
-                <h1>Update Client Information</h1>
+                <h1 style={{color: 'white'}}>Update Client Information</h1>
+                
+                <Card sx={{padding: '2em'}}>
+                    <Grid container spacing={0} mt={3} mb={3} justifyContent="center">
+                        <Grid item xs={3}>
+                            <select onChange={selectedName} value={selected}>
+                                <option value="" disabled={true}>
+                                    --Choose Client--
+                                </option>
+                                {
+                                    allUser.map((element, index) =>
+                                    <option value={index} key={element.FirstName}>{element.FirstName} {element.LastName}</option >
+                                    )
+                                }
+                            </select>   
+                        </Grid>
+                    </Grid>
+
+
+                    <Grid container spacing={0} mt={3} mb={3} justifyContent="center">
+                        <Grid item xs={3}>
+                            <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <DesktopDatePicker
+                                    label="DOB"
+                                    id="DOB_id"
+                                    inputFormat="YYYY/MM/DD"
+                                    disableFuture
+                                    value={calDate}
+                                    onChange={handleChange}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />   
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="firstName_id"
+                        label="FirstName"
+                        value={firstName}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="lastName_id"
+                        label="LastName"
+                        value={lastName}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="license_id"
+                        label="DriversLicense"
+                        type="number"
+                        value={diverLicense}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="email_id"
+                        label="Email"
+                        type="email"
+                        value={email}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="phone_id"
+                        label="PhoneNum"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="province_id"
+                        label="Province"
+                        value={province}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="city_id"
+                        label="City"
+                        value={city}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="postal_id"
+                        label="PostalCode"
+                        value={postalCode}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="streetNumber_id"
+                        label="StreetNumber"
+                        value={streetNumber}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="streetName_id"
+                        label="StreetName"
+                        value={streetName}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        sx={{m: 2}}
+                        required
+                        id="unit_id"
+                        label="UnitNumber"
+                        value={unitNumber}
+                        onChange={handleChange}
+                    />
+
+                    <FormControlLabel sx={{m: 2}} control={<Switch id="goldMember_id" checked={goldMember}/>} label="GoldMember" labelPlacement='start'  onChange={handleChange} />
+
+                    <FormControlLabel sx={{m: 2}} control={<Switch id="banned_id" checked={banned}/>} label="Banned" labelPlacement='start'  onChange={handleChange} />
+
+                    <Grid container spacing={0} justifyContent="center">
+                        <Grid item xs={3}>
+                            <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
+                        </Grid>   
+                    </Grid> 
+                </Card>
             </Container>
-
-            <Grid container spacing={0} justifyContent="center">
-                <Grid item xs={3}>
-                    <select onChange={selectedName} value={selected}>
-                        <option value="" disabled={true}>
-                            --Choose Client--
-                        </option>
-                        {
-                            allUser.map((element, index) =>
-                            <option value={index} key={element.FirstName}>{element.FirstName} {element.LastName}</option >
-                            )
-                        }
-                    </select>    
-                </Grid>   
-            </Grid> 
-
-            <Grid container spacing={0} justifyContent="center">
-                <Grid item xs={3}>
-                    <LocalizationProvider dateAdapter={AdapterMoment}>
-                        <DesktopDatePicker
-                            label="DOB"
-                            id="DOB_id"
-                            inputFormat="MM/DD/YYYY"
-                            disableFuture
-                            value={calDate}
-                            onChange={handleChange}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>                    
-                </Grid>   
-            </Grid> 
-
-            <Container>
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="firstName_id"
-                    label="FirstName"
-                    value={firstName}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="lastName_id"
-                    label="LastName"
-                    value={lastName}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="license_id"
-                    label="DriversLicense"
-                    type="number"
-                    value={diverLicense}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="email_id"
-                    label="Email"
-                    type="email"
-                    value={email}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="phone_id"
-                    label="PhoneNum"
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="province_id"
-                    label="Province"
-                    value={province}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="city_id"
-                    label="City"
-                    value={city}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="postal_id"
-                    label="PostalCode"
-                    value={postalCode}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="streetNumber_id"
-                    label="StreetNumber"
-                    value={streetNumber}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="streetName_id"
-                    label="StreetName"
-                    value={streetName}
-                    onChange={handleChange}
-                />
-                <TextField
-                    sx={{m: 2}}
-                    required
-                    id="unit_id"
-                    label="UnitNumber"
-                    value={unitNumber}
-                    onChange={handleChange}
-                />
-
-
-                <FormControlLabel sx={{m: 2}} control={<Switch id="goldMember_id" checked={goldMember}/>} label="GoldMember" labelPlacement='start'  onChange={handleChange} />
-
-                <Grid container spacing={0} justifyContent="center">
-                    <Grid item xs={3}>
-                        <Button sx={{p: 2, m: 2, width: '250px', minWidth: '8vw'}} variant="contained" onClick={handleSubmit}>Submit</Button>
-                    </Grid>   
-                </Grid> 
-            </Container>
-        </div>
+        </Box>
     );
 }

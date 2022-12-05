@@ -219,29 +219,28 @@ export default function Details() {
       {/*Header section from component*/}
       <Header />
 
-      {/*dummie customers select*/}
-      <select
-        required
-        name="branch_ad"
-        id="dropBranch_input_id"
-        onChange={handleChange}
-        defaultValue={"ー Select Pick-Up Location ー"}
-      >
-        <option key={-1} disabled value={"ー Select Pick-Up Location ー"}> ー Select Drop-Off Location ー </option>
-        {customers.map((people, index) => {
-          return <option key={index} value={index}>{people.FirstName} {people.LastName}</option>
-        })}
-      </select>
-
       {/*Box Container is MUI standard convention for styling*/}
       <Box>
         <Container>
           <ThemeProvider theme={theme}>
-            <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold', color: 'white' }} mb={1} mt={1}>
+            <Box sx={{ fontSize: 'h5.fontSize', fontWeight: 'bold', color: 'white', display: 'flex', gap: '0.5em'}} mb={2} mt={2}>
               <IconButton aria-label="back" color="primary" href="cars" to="/cars">
                 <ArrowBackIcon />
               </IconButton>
-              See all cars
+              See all cars 
+              {/*dummie customers select*/}
+              <select
+                required
+                name="branch_ad"
+                id="dropBranch_input_id"
+                onChange={handleChange}
+                defaultValue={"ー Who are you? ー"}
+              >
+                <option key={-1} disabled value={"ー Who are you? ー"}> ー Who are you? ー </option>
+                {customers.map((people, index) => {
+                  return <option key={index} value={index}>{people.FirstName} {people.LastName}</option>
+                })}
+              </select>
             </Box>
           </ThemeProvider>
 
@@ -303,8 +302,10 @@ export default function Details() {
                 </Box>
                 <Divider sx={{ marginTop: '1em', marginBottom: '1em' }} />
                 Interested? Just add it on the next step.
-                <Button variant="contained" onClick={calculateFees} style={{ marginTop: '2em', marginLeft: '8em', paddingLeft: "2.5em", paddingRight: "2em" }}>Add</Button>
-                <Button variant="contained" onClick={removeFees} style={{ marginTop: '2em', marginLeft: '1em', background: "red" }}>Remove</Button>
+                <Box sx={{display: 'flex', textAlign: 'left', gap: '2em', paddingTop: '1em'}}>
+                  <Button variant="contained" onClick={calculateFees} style={{ paddingLeft: "2em", paddingRight: "2em", minWidth: '150px' }}>Add</Button>
+                  <Button variant="contained" onClick={removeFees} style={{ paddingLeft: "2em", paddingRight: "2em", background: "red", minWidth: '150px' }}>Remove</Button>
+                </Box>  
               </Card>
 
               <Box color={'#fff'}>

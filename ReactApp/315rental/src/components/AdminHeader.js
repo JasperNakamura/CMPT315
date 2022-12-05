@@ -29,7 +29,7 @@ const theme = createTheme({
 })
 
 /*MUI AppBar modified tempalte*/
-const pages = ['rentals', 'returns', 'cars'];
+const pages = ['rentals', 'returns', 'cars', 'clients'];
 const settings = ['Profile', 'Account', 'Logout'];
 
 const HomeAppBar = () => {
