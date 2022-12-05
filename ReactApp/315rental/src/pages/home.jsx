@@ -14,8 +14,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PaidIcon from '@mui/icons-material/Paid';
 
-import PickupSearch from "../components/LocationPSearch";
-import DropoffSearch from "../components/LocationDSearch";
 import DateDropoff from "../components/DateDSelector";
 import DatePickup from "../components/DatePSelector";
 import { Container } from "@mui/system";
