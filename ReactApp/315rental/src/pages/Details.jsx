@@ -189,6 +189,29 @@ export default function Details() {
     setOpen(false)
   };
 
+  const handleSubmit = async (event) => {
+    
+    const total = totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees);
+
+    await axios.post('http://127.0.0.1:8000/api/rentals/', {
+        DateFrom: pickUpDate,
+        DateTo: dropOffDate,
+        DateReturned: null,
+        TotalCost: total,
+        LicensePlate: carDetails.LicensePlate,
+        GoldMember: customer.Data.GoldMember,
+        Customer: customer.Data.ID,
+        Employee: null,
+        BranchFrom: pickUpLocation.Data.BranchID,
+        BranchTo: dropOffLocation.Data.BranchID,
+        Car: carDetails.CarID,
+        CarType: carType[0].TypeID
+    })
+    .then(res => console.log(res)) 
+    .catch(err => console.log(err));
+    setOpen(false)
+}
+
   return (
     <Box bgcolor='#21033a'>
       {/* MUI's CSS Normalize */}
@@ -424,18 +447,6 @@ export default function Details() {
                           })}</span>
                       })}
                   </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Pay now (5% off)</span>
-                    {
-                      carType.map(data => {
-                        return <span>{((totalFees + calculateTax(gst, totalFees) + calculateTax(pst, totalFees) + calculateTax(hst, totalFees)) * 0.95).toLocaleString('en-US',
-                          {
-                            style: 'currency',
-                            currency: 'CAD',
-                          })}</span>
-                      })}
-                  </Box>
-
                   <Box display='flex' justifyContent={'center'} mt={2}>
                     <ThemeProvider theme={theme}>
                       <Button onClick={handleOpen} variant="contained">Apply for reservation</Button>
@@ -464,7 +475,7 @@ export default function Details() {
                             <Box style={{float: 'right'}}>
                               {banned === null ? <Button variant="contained" onClick={handleClose} >Close</Button> :
                                 (
-                                  banned === true ? <Button variant="contained" onClick={handleClose} >Close</Button> : <Button variant="contained" onClick={handleClose} component={RouterLink} to={"/"}>Go Home</Button >
+                                  banned === true ? <Button variant="contained" onClick={handleClose} >Close</Button> :  <Button variant="contained" onClick={handleSubmit} >Close</Button >                                  
                                 )
                               }
                             </Box>
