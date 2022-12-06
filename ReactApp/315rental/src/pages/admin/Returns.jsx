@@ -104,7 +104,8 @@ export default function Returns() {
       value += data[index].TotalCost;
       count += 1;
     }
-    if(value >= 1 && count >= 3){
+    if(value >= 2000 && count >= 3){
+      console.log("Gold!")
       await axios.put(`http://127.0.0.1:8000/api/customers/${customerObj.ID}/`, {
       FirstName: customerObj.FirstName,
       LastName: customerObj.LastName,
