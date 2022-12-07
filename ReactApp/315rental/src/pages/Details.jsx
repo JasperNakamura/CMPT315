@@ -197,7 +197,7 @@ export default function Details() {
         DateFrom: pickUpDate,
         DateTo: dropOffDate,
         DateReturned: null,
-        TotalCost: total,
+        TotalCost: null,
         LicensePlate: carDetails.LicensePlate,
         GoldMember: customer.Data.GoldMember,
         Customer: customer.Data.ID,

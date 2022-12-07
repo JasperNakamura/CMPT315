@@ -33,8 +33,8 @@ export default function CarFilter() {
         'Mazda', 'Chevrolet', 'Mercedes-Benz', 'Porsche', 'INFINITI', 'Jaguar', 'GMC', 'Subaru', 'Audi', 'Lincoln', 'Chrysler',
         'Mitsubishi', 'Cadillac', 'Lexus', 'Acura', 'Buick', 'Genesis', 'Tesla', 'Volvo', 'MINI', 'Scion', 'FIAT', 'Alda Romeo',
         'Ferrari', 'Maserati', 'McLaren', 'Suzuki'];
-    const colors = ["White", "Gray", "Black", "Blue", "Red", "Green", "Orange", "Brown", "Yellow", "Purple"];
-    const models = ["SUV", "Sedan", "Truck", "Coupe", "Minivan", "Hatch Back", "Wagon", "Premium","Convertible","other"]
+    const colors = ["White", "Gray", "Black", "Blue", "Red", "Green", "Orange", "Brown", "Yellow", "Purple", "Cream"];
+    const models = ["SUV", "Sedan", "Truck", "Coupe", "Minivan", "Hatch Back", "Wagon", "Premium","Convertible","other", "Economy"]
     
     const transmissionsType = ["Auto", "CVT", "Manual"];
     const fuelType = ["Gas", "Hybrid", "Diesel", "Electric"];
